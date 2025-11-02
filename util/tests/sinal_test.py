@@ -1,7 +1,9 @@
 import unittest
+
 import numpy as np
-from util.fonte import FonteDeInformacao
 import numpy.testing as npt
+
+from util.sinal import Sinal
 
 
 class TestFonteDeDados(unittest.TestCase):
@@ -49,68 +51,64 @@ class TestFonteDeDados(unittest.TestCase):
     # o = "01101111"
     # g = "01100111"
     def test_fluxo_bits_1_bit_por_simbolo(self):
-        fonte = FonteDeInformacao(
-            mensagem="The quick brown fox jumps over the lazy dog", bits_por_simbolo=1
+        fonte = Sinal(bits_por_simbolo=1)
+        sinal = fonte.gerar_sinal(
+            mensagem="The quick brown fox jumps over the lazy dog"
         )
-        sinal = fonte.sinal
 
         # T = "01010100"
-        passo_de_tensao = fonte.tensao_pico / (2**1 - 1)
         t = np.array(
             [
-                0 * passo_de_tensao,
-                1 * passo_de_tensao,
-                0 * passo_de_tensao,
-                1 * passo_de_tensao,
-                0 * passo_de_tensao,
-                1 * passo_de_tensao,
-                0 * passo_de_tensao,
-                0 * passo_de_tensao,
+                0,
+                1,
+                0,
+                1,
+                0,
+                1,
+                0,
+                0,
             ]
         )
 
         npt.assert_array_equal(sinal[:8], t)
 
     def test_fluxo_bits_2_bits_por_simbolo(self):
-        fonte = FonteDeInformacao(
-            mensagem="The quick brown fox jumps over the lazy dog", bits_por_simbolo=2
+        fonte = Sinal(bits_por_simbolo=2)
+        sinal = fonte.gerar_sinal(
+            mensagem="The quick brown fox jumps over the lazy dog"
         )
-        sinal = fonte.sinal
 
         # T = "01" "01" "01" "00" = 1110
-        passo_de_tensao = fonte.tensao_pico / (2**2 - 1)
         t = np.array(
             [
-                1 * passo_de_tensao,
-                1 * passo_de_tensao,
-                1 * passo_de_tensao,
-                0 * passo_de_tensao,
+                [0, 1],
+                [0, 1],
+                [0, 1],
+                [0, 0],
             ]
         )
 
         npt.assert_array_equal(sinal[:4], t)
 
     def test_fluxo_bits_4_bits_por_simbolo(self):
-        fonte = FonteDeInformacao(
-            mensagem="The quick brown fox jumps over the lazy dog", bits_por_simbolo=4
+        fonte = Sinal(bits_por_simbolo=4)
+        sinal = fonte.gerar_sinal(
+            mensagem="The quick brown fox jumps over the lazy dog"
         )
-        sinal = fonte.sinal
 
         # T = "0101" "0100" = 5 4
-        passo_de_tensao = fonte.tensao_pico / (2**4 - 1)
-        t = np.array([5 * passo_de_tensao, 4 * passo_de_tensao])
+        t = np.array([[0, 1, 0, 1], [0, 1, 0, 0]])
 
         npt.assert_array_equal(sinal[:2], t)
 
     def test_fluxo_bits_8_bits_por_simbolo(self):
-        fonte = FonteDeInformacao(
-            mensagem="The quick brown fox jumps over the lazy dog", bits_por_simbolo=8
+        fonte = Sinal(bits_por_simbolo=8)
+        sinal = fonte.gerar_sinal(
+            mensagem="The quick brown fox jumps over the lazy dog"
         )
-        sinal = fonte.sinal
 
         # T = "01010100" = 84
-        passo_de_tensao = fonte.tensao_pico / (2**8 - 1)
-        t = np.array([84 * passo_de_tensao])
+        t = np.array([[0, 1, 0, 1, 0, 1, 0, 0]])
 
         npt.assert_array_equal(sinal[:1], t)
 
