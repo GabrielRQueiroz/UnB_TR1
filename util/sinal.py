@@ -6,7 +6,15 @@ class Sinal:
     """Classe que converte uma mensagem de texto em um sinal digital."""
 
     def __init__(self, bits_por_simbolo: int = 1):
-        self.bits_por_simbolo = bits_por_simbolo
+        self._bits_por_simbolo = bits_por_simbolo
+
+    @property
+    def bits_por_simbolo(self) -> int:
+        return self._bits_por_simbolo
+    
+    @bits_por_simbolo.setter
+    def bits_por_simbolo(self, valor: int):
+        self._bits_por_simbolo = valor
 
     def gerar_sinal_binario(self, mensagem: str) -> np.ndarray:
         """Converte a mensagem em uma sequência de bits."""
@@ -42,7 +50,7 @@ class Sinal:
         return sinal_com_curva
 
     def binario_para_decimal(self, bits: np.ndarray) -> np.ndarray:
-        """Converte uma sequência de símbolos em uma sequência de seus respectivos decimais."""
+        """Converte uma sequência de símbolos em uma sequência de seus respectivos decimais, normalizados (de 0 a 1)."""
         sinal = []
         passo_de_tensao = 1 / (2**self.bits_por_simbolo - 1)
 

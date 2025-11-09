@@ -1,6 +1,8 @@
 import unittest
 
+import numpy as np
 import numpy.testing as npt
+from matplotlib import pyplot as plt
 
 from camadas.fisica.transmissor.banda_base import TransmissorBandaBase
 
@@ -45,6 +47,31 @@ class TestTransmissorBandaBase(unittest.TestCase):
         # 1/(2**1-1) = 1
         # => -1 * 1 = -1
         npt.assert_array_equal(out_1bit[0], -1 * transmissor_1bit.tensao_pico)
+
+        plt.figure(figsize=(20, 6))
+        plt.subplot(3, 1, 1)
+        plt.title("Codificação NRZ Polar - 8 bits por símbolo")
+        plt.plot(
+            np.append(out_8bits.flatten(), out_8bits.flatten()[-1]),
+            drawstyle="steps-post",
+        )
+        plt.grid()
+        plt.subplot(3, 1, 2)
+        plt.title("Codificação NRZ Polar - 4 bits por símbolo")
+        plt.plot(
+            np.append(out_4bits.flatten(), out_4bits.flatten()[-1]),
+            drawstyle="steps-post",
+        )
+        plt.grid()
+        plt.subplot(3, 1, 3)
+        plt.title("Codificação NRZ Polar - 1 bit por símbolo")
+        plt.plot(
+            np.append(out_1bit.flatten(), out_1bit.flatten()[-1]),
+            drawstyle="steps-post",
+        )
+        plt.grid()
+        plt.tight_layout()
+        plt.savefig("images/transmissor_codificacao_nrz_polar.png")
 
     def test_bipolar(self):
         transmissor_8bits = TransmissorBandaBase(
@@ -99,6 +126,31 @@ class TestTransmissorBandaBase(unittest.TestCase):
         npt.assert_array_equal(out_1bit[1], [0.0])
         npt.assert_array_equal(out_1bit[2], [1.0 * transmissor_1bit.tensao_pico])
 
+        plt.figure(figsize=(20, 6))
+        plt.subplot(3, 1, 1)
+        plt.title("Codificação Bipolar - 8 bits por símbolo")
+        plt.plot(
+            np.append(out_8bits.flatten(), out_8bits.flatten()[-1]),
+            drawstyle="steps-post",
+        )
+        plt.grid()
+        plt.subplot(3, 1, 2)
+        plt.title("Codificação Bipolar - 4 bits por símbolo")
+        plt.plot(
+            np.append(out_4bits.flatten(), out_4bits.flatten()[-1]),
+            drawstyle="steps-post",
+        )
+        plt.grid()
+        plt.subplot(3, 1, 3)
+        plt.title("Codificação Bipolar - 1 bit por símbolo")
+        plt.plot(
+            np.append(out_1bit.flatten(), out_1bit.flatten()[-1]),
+            drawstyle="steps-post",
+        )
+        plt.grid()
+        plt.tight_layout()
+        plt.savefig("images/transmissor_codificacao_bipolar.png")
+
     def test_manchester(self):
         transmissor_8bits = TransmissorBandaBase(
             codificacao="manchester", bits_por_simbolo=8, debug=True
@@ -152,6 +204,31 @@ class TestTransmissorBandaBase(unittest.TestCase):
 
         npt.assert_array_equal(out_1bit[0], [1 * transmissor_1bit.tensao_pico])
         npt.assert_array_equal(out_1bit[1], [0])
+
+        plt.figure(figsize=(20, 6))
+        plt.subplot(3, 1, 1)
+        plt.title("Codificação Manchester - 8 bits por símbolo")
+        plt.plot(
+            np.append(out_8bits.flatten(), out_8bits.flatten()[-1]),
+            drawstyle="steps-post",
+        )
+        plt.grid()
+        plt.subplot(3, 1, 2)
+        plt.title("Codificação Manchester - 4 bits por símbolo")
+        plt.plot(
+            np.append(out_4bits.flatten(), out_4bits.flatten()[-1]),
+            drawstyle="steps-post",
+        )
+        plt.grid()
+        plt.subplot(3, 1, 3)
+        plt.title("Codificação Manchester - 1 bit por símbolo")
+        plt.plot(
+            np.append(out_1bit.flatten(), out_1bit.flatten()[-1]),
+            drawstyle="steps-post",
+        )
+        plt.grid()
+        plt.tight_layout()
+        plt.savefig("images/transmissor_codificacao_manchester.png")
 
 
 if __name__ == "__main__":
