@@ -5,6 +5,7 @@ import numpy.testing as npt
 from matplotlib import pyplot as plt
 
 from camadas.fisica.transmissor.banda_base import TransmissorBandaBase
+from camadas.fisica.transmissor.modulador import Modulador
 
 
 class TestTransmissorBandaBase(unittest.TestCase):
@@ -229,6 +230,26 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.grid()
         plt.tight_layout()
         plt.savefig("images/transmissor_codificacao_manchester.png")
+
+    def test_modulador_ask(self):
+        modulador = Modulador(
+            tensao_pico=3.3,
+            largura_de_banda=4.0,
+            bits_por_simbolo=1,
+            modulacao="ask",
+            debug=True,
+        )
+
+        sinal_modulado = modulador.processar_sinal(mensagem="The")
+        print(sinal_modulado)
+
+        plt.figure(figsize=(10, 4))
+        plt.title("Modulação ASK")
+        plt.plot(sinal_modulado, label="Mensagem: 'The'")
+        plt.legend()
+        plt.tight_layout()
+        plt.grid()
+        plt.savefig("images/transmissor_modulacao_ask.png")
 
 
 if __name__ == "__main__":

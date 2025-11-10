@@ -187,9 +187,16 @@ class TestModulacoes(unittest.TestCase):
 
         fases_2bits = qpsk.gerar_parametros(decimal_mensagem_2bits)
 
+        gray = Gray(bits_por_simbolo=2, normalizado=True)
+        tabela_gray = gray.tabela_gray
+        fases_esperadas_2bits = [
+            np.where(tabela_gray == simbolo)[0][0] * (360 / 4)
+            for simbolo in decimal_mensagem_2bits
+        ]
+
         npt.assert_array_almost_equal(
             fases_2bits,
-            decimal_mensagem_2bits * (360 / (2**2)),
+            np.array(fases_esperadas_2bits),   
         )
 
         plt.figure(figsize=(10, 4))
