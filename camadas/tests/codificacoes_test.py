@@ -66,7 +66,7 @@ class TestCodificacoes(unittest.TestCase):
         )
         plt.grid()
         plt.tight_layout()
-        plt.savefig("images/codificacao_nrz_polar.png")
+        plt.savefig("images/tests/camada_fisica/codificacao_nrz_polar.png")
 
     def test_bipolar(self):
         codificador = Bipolar()
@@ -78,7 +78,9 @@ class TestCodificacoes(unittest.TestCase):
         sinal_codificado_8bits = codificador.codificar(mensagem_8bits)
         npt.assert_array_equal(sinal_codificado_8bits[0], [0, 1, 0, 1, 0, 1, 0, 0])
         npt.assert_array_equal(sinal_codificado_8bits[1], [0, 0, 0, 0, 0, 0, 0, 0])
-        npt.assert_array_equal(sinal_codificado_8bits[2], [-0, -1, -1, -0, -1, -0, -0, -0])
+        npt.assert_array_equal(
+            sinal_codificado_8bits[2], [-0, -1, -1, -0, -1, -0, -0, -0]
+        )
         npt.assert_array_equal(sinal_codificado_8bits[3], [0, 0, 0, 0, 0, 0, 0, 0])
 
         sinal_codificado_4bits = codificador.codificar(mensagem_4bits)
@@ -133,7 +135,7 @@ class TestCodificacoes(unittest.TestCase):
         )
         plt.grid()
         plt.tight_layout()
-        plt.savefig("images/codificacao_bipolar.png")
+        plt.savefig("images/tests/camada_fisica/codificacao_bipolar.png")
 
     def test_manchester(self):
         codificador = Manchester()
@@ -193,7 +195,7 @@ class TestCodificacoes(unittest.TestCase):
         plt.legend()
         plt.grid()
         plt.tight_layout()
-        plt.savefig("images/codificacao_manchester.png")
+        plt.savefig("images/tests/camada_fisica/codificacao_manchester.png")
 
 
 if __name__ == "__main__":

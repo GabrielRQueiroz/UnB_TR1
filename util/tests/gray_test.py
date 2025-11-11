@@ -59,7 +59,7 @@ class GrayTest(unittest.TestCase):
         np.testing.assert_array_equal(tabela_4bits, bits_esperados_4bits)
 
         plt.figure(figsize=(6, 12))
-        plt.subplot(2,1,1)
+        plt.subplot(2, 1, 1)
         plt.title("Codificação Gray (2 bits por símbolo)")
         plt.xlabel("Componente I")
         plt.ylabel("Componente Q")
@@ -78,7 +78,7 @@ class GrayTest(unittest.TestCase):
                 va="center",
             )
         plt.grid()
-        plt.subplot(2,1,2)
+        plt.subplot(2, 1, 2)
         plt.title("Codificação Gray (4 bits por símbolo)")
         plt.xlabel("Componente I")
         plt.ylabel("Componente Q")
@@ -97,4 +97,4 @@ class GrayTest(unittest.TestCase):
                 va="center",
             )
         plt.grid()
-        plt.savefig("images/gray_binario.png")
+        plt.savefig("images/tests/camada_fisica/gray_binario.png")

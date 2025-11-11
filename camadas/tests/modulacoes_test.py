@@ -55,7 +55,7 @@ class TestModulacoes(unittest.TestCase):
         plt.ylim(-0.5, 1.5)
         plt.grid()
         plt.tight_layout()
-        plt.savefig("images/modulacao_ask.png")
+        plt.savefig("images/tests/camada_fisica/modulacao_ask.png")
 
     def test_fsk_gerar_parametros(self):
         sinal = Sinal(bits_por_simbolo=1)
@@ -108,7 +108,7 @@ class TestModulacoes(unittest.TestCase):
         plt.legend()
         plt.grid()
         plt.tight_layout()
-        plt.savefig("images/modulacao_fsk.png")
+        plt.savefig("images/tests/camada_fisica/modulacao_fsk.png")
 
     def test_psk_gerar_parametros(self):
         sinal = Sinal(bits_por_simbolo=1)
@@ -175,7 +175,7 @@ class TestModulacoes(unittest.TestCase):
         plt.yticks(np.arange(0, 361, 30))
         plt.grid()
         plt.tight_layout()
-        plt.savefig("images/modulacao_psk.png")
+        plt.savefig("images/tests/camada_fisica/modulacao_psk.png")
 
     def test_qpsk_gerar_parametros(self):
         sinal = Sinal(bits_por_simbolo=2)
@@ -196,7 +196,7 @@ class TestModulacoes(unittest.TestCase):
 
         npt.assert_array_almost_equal(
             fases_2bits,
-            np.array(fases_esperadas_2bits),   
+            np.array(fases_esperadas_2bits),
         )
 
         plt.figure(figsize=(10, 4))
@@ -204,7 +204,7 @@ class TestModulacoes(unittest.TestCase):
         plt.stem(fases_2bits)
         plt.grid()
         plt.tight_layout()
-        plt.savefig("images/modulacao_qpsk.png")
+        plt.savefig("images/tests/camada_fisica/modulacao_qpsk.png")
 
     def test_qam16_gerar_parametros(self):
         sinal = Sinal(bits_por_simbolo=4)
@@ -297,4 +297,4 @@ class TestModulacoes(unittest.TestCase):
         plt.stem(fases_4bits)
         plt.grid()
         plt.tight_layout()
-        plt.savefig("images/modulacao_16qam.png")
+        plt.savefig("images/tests/camada_fisica/modulacao_16qam.png")

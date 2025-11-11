@@ -4,7 +4,6 @@ import numpy as np
 import numpy.testing as npt
 from matplotlib import pyplot as plt
 
-
 from util.sinal import Sinal
 
 
@@ -118,8 +117,8 @@ class TestFonteDeDados(unittest.TestCase):
         fonte = Sinal(bits_por_simbolo=2)
         simbolos = np.array([0, 1, 2, 3])
         sinal_com_curva = fonte.gerar_pulso_tensao(simbolos)
-        
-        # Plotar 1) o sinal completo e 2) cada símbolo individualmente 
+
+        # Plotar 1) o sinal completo e 2) cada símbolo individualmente
         plt.figure(figsize=(10, 6))
         plt.subplot(2, 1, 1)
         plt.title("Pulsos de tensão")
@@ -138,8 +137,7 @@ class TestFonteDeDados(unittest.TestCase):
         plt.legend()
         plt.grid()
         plt.tight_layout()
-        plt.savefig("images/sinal_com_curva_sigma.png")
-            
+        plt.savefig("images/tests/camada_fisica/sinal_com_curva_sigma.png")
 
         # Verifica se o comprimento do sinal está correto
         self.assertEqual(len(sinal_com_curva), len(simbolos))
