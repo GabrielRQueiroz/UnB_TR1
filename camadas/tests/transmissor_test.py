@@ -33,6 +33,10 @@ class TestTransmissorBandaBase(unittest.TestCase):
             mensagem="The quick brown fox jumps over the lazy dog"
         )
 
+        self.assertEqual(out_8bits.shape[0], 43)  # 43 símbolos de 8 bits
+        self.assertEqual(out_4bits.shape[0], 86)  # 86 símbolos de 4 bits
+        self.assertEqual(out_1bit.shape[0], 344)  # 344 símbolos de 1 bit
+
         # [-1, 1, -1, 1, -1, 1, -1, -1] = -128 + 64 - 32 + 16 - 8 + 4 - 2 - 1 = -87
         # 1/(2**8-1) = 0.00392156862
         # => -87 * 0.00392156862 = -0.34117647058
@@ -55,24 +59,36 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.figure(figsize=(20, 6))
         plt.subplot(3, 1, 1)
         plt.title("Codificação NRZ Polar - 8 bits por símbolo")
+        tempo = np.arange(0, len(out_8bits) + 1) / transmissor_8bits.frequencia_de_simbolo
         plt.plot(
+            tempo,
             np.append(out_8bits.flatten(), out_8bits.flatten()[-1]),
             drawstyle="steps-post",
         )
+        plt.xlabel("Tempo (s)")
+        plt.ylabel("Amplitude")
         plt.grid()
         plt.subplot(3, 1, 2)
         plt.title("Codificação NRZ Polar - 4 bits por símbolo")
+        tempo = np.arange(0, len(out_4bits) + 1) / transmissor_4bits.frequencia_de_simbolo
         plt.plot(
+            tempo,
             np.append(out_4bits.flatten(), out_4bits.flatten()[-1]),
             drawstyle="steps-post",
         )
+        plt.xlabel("Tempo (s)")
+        plt.ylabel("Amplitude")
         plt.grid()
         plt.subplot(3, 1, 3)
         plt.title("Codificação NRZ Polar - 1 bit por símbolo")
+        tempo = np.arange(0, len(out_1bit) + 1) / transmissor_1bit.frequencia_de_simbolo
         plt.plot(
+            tempo,
             np.append(out_1bit.flatten(), out_1bit.flatten()[-1]),
             drawstyle="steps-post",
         )
+        plt.xlabel("Tempo (s)")
+        plt.ylabel("Amplitude")
         plt.grid()
         plt.tight_layout()
         plt.savefig("images/tests/camada_fisica/transmissor_codificacao_nrz_polar.png")
@@ -134,24 +150,36 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.figure(figsize=(20, 6))
         plt.subplot(3, 1, 1)
         plt.title("Codificação Bipolar - 8 bits por símbolo")
+        tempo = np.arange(0, len(out_8bits) + 1) / transmissor_8bits.frequencia_de_simbolo
         plt.plot(
+            tempo,
             np.append(out_8bits.flatten(), out_8bits.flatten()[-1]),
             drawstyle="steps-post",
         )
+        plt.xlabel("Tempo (s)")
+        plt.ylabel("Amplitude")
         plt.grid()
         plt.subplot(3, 1, 2)
         plt.title("Codificação Bipolar - 4 bits por símbolo")
+        tempo = np.arange(0, len(out_4bits) + 1) / transmissor_4bits.frequencia_de_simbolo
         plt.plot(
+            tempo,
             np.append(out_4bits.flatten(), out_4bits.flatten()[-1]),
             drawstyle="steps-post",
         )
+        plt.xlabel("Tempo (s)")
+        plt.ylabel("Amplitude")
         plt.grid()
         plt.subplot(3, 1, 3)
+        tempo = np.arange(0, len(out_1bit) + 1) / transmissor_1bit.frequencia_de_simbolo
         plt.title("Codificação Bipolar - 1 bit por símbolo")
         plt.plot(
+            tempo,
             np.append(out_1bit.flatten(), out_1bit.flatten()[-1]),
             drawstyle="steps-post",
         )
+        plt.xlabel("Tempo (s)")
+        plt.ylabel("Amplitude")
         plt.grid()
         plt.tight_layout()
         plt.savefig("images/tests/camada_fisica/transmissor_codificacao_bipolar.png")
@@ -214,24 +242,35 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.figure(figsize=(20, 6))
         plt.subplot(3, 1, 1)
         plt.title("Codificação Manchester - 8 bits por símbolo")
+        tempo = np.arange(0, len(out_8bits) + 1) / transmissor_8bits.frequencia_de_simbolo
         plt.plot(
+            tempo,
             np.append(out_8bits.flatten(), out_8bits.flatten()[-1]),
             drawstyle="steps-post",
         )
+        plt.xlabel("Tempo (s)")
+        plt.ylabel("Amplitude")
         plt.grid()
         plt.subplot(3, 1, 2)
         plt.title("Codificação Manchester - 4 bits por símbolo")
+        tempo = np.arange(0, len(out_4bits) + 1) / transmissor_4bits.frequencia_de_simbolo
         plt.plot(
+            tempo,
             np.append(out_4bits.flatten(), out_4bits.flatten()[-1]),
             drawstyle="steps-post",
         )
+        plt.xlabel("Tempo (s)")
+        plt.ylabel("Amplitude")
         plt.grid()
         plt.subplot(3, 1, 3)
         plt.title("Codificação Manchester - 1 bit por símbolo")
+        tempo = np.arange(0, len(out_1bit) + 1) / transmissor_1bit.frequencia_de_simbolo
         plt.plot(
             np.append(out_1bit.flatten(), out_1bit.flatten()[-1]),
             drawstyle="steps-post",
         )
+        plt.xlabel("Tempo (s)")
+        plt.ylabel("Amplitude")
         plt.grid()
         plt.tight_layout()
         plt.savefig("images/tests/camada_fisica/transmissor_codificacao_manchester.png")

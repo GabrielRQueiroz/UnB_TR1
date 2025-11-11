@@ -16,7 +16,10 @@ class Decodificador(ReceptorBase):
         self.debug = debug
 
     def processar_sinal(self, sinal: np.ndarray) -> str:
-
+        # Fazer detecção de forma de onda:
+        # 0) guardar em um mini db os a forma de onda de cada símbolo possível da codificacao esperada
+        # 1) amostra o sinal recebido
+        # 2) comprara com os níveis de tensão do mini db com um limiar de tolerância  
         
         mensagem_decodificada = "mensagem decodificada" 
         return mensagem_decodificada

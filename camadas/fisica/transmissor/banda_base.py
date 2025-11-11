@@ -30,6 +30,7 @@ class TransmissorBandaBase(TransmissorBase):
             raise ValueError(f"Codificação '{codificacao}' não implementada.")
         self.codificador = CODIFICACOES[codificacao]()
         self.bits_por_simbolo = bits_por_simbolo
+        self.frequencia_de_simbolo = frequencia_de_simbolo
         self.tensao_pico = tensao_pico
         self.taxa_amostragem = taxa_amostragem
         self.debug = (
