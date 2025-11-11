@@ -20,9 +20,10 @@ class TransmissorBandaBase(TransmissorBase):
         self,
         codificacao: str,
         bits_por_simbolo: int = 1,
+        frequencia_de_simbolo: float = 1.0,
         tensao_pico: float = 3.3,
         taxa_amostragem: int = 1000,
-        debug=False,
+        debug: bool = False,
     ):
         super().__init__()
         if codificacao.lower() not in CODIFICACOES:
@@ -50,15 +51,14 @@ class TransmissorBandaBase(TransmissorBase):
         # Aplica valor decimal de cada símbolo
         sinal_codificado = sinal.binario_para_decimal(sinal_codificado)
 
-        if not self.debug:
-            sinal_codificado = sinal.gerar_pulso_tensao(sinal_codificado)
-
         sinal_codificado *= (
             self.tensao_pico
         )  # Ajusta o nível de tensão do sinal codificado
 
         if not self.debug:
-            sinal_codificado += ruido.gerar_ruido(
+            sinal_codificado = sinal.gerar_pulso_tensao(
+                sinal_codificado
+            ) + ruido.gerar_ruido(
                 sinal_codificado
             )  # Adiciona ruído ao sinal codificado
 

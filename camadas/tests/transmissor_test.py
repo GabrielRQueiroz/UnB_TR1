@@ -76,6 +76,7 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.grid()
         plt.tight_layout()
         plt.savefig("images/tests/camada_fisica/transmissor_codificacao_nrz_polar.png")
+        plt.close()
 
     def test_bipolar(self):
         transmissor_8bits = TransmissorBandaBase(
@@ -154,6 +155,7 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.grid()
         plt.tight_layout()
         plt.savefig("images/tests/camada_fisica/transmissor_codificacao_bipolar.png")
+        plt.close()
 
     def test_manchester(self):
         transmissor_8bits = TransmissorBandaBase(
@@ -233,6 +235,7 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.grid()
         plt.tight_layout()
         plt.savefig("images/tests/camada_fisica/transmissor_codificacao_manchester.png")
+        plt.close()
 
     def test_modulador_ask(self):
         modulador = Modulador(
@@ -262,6 +265,7 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.tight_layout()
         plt.grid()
         plt.savefig("images/tests/camada_fisica/transmissor_modulacao_ask.png")
+        plt.close()
 
     def test_modulador_fsk(self):
         modulador = Modulador(
@@ -291,6 +295,7 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.tight_layout()
         plt.grid()
         plt.savefig("images/tests/camada_fisica/transmissor_modulacao_fsk.png")
+        plt.close()
 
     def test_modulador_psk(self):
         modulador = Modulador(
@@ -325,6 +330,7 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.tight_layout()
         plt.grid()
         plt.savefig("images/tests/camada_fisica/transmissor_modulacao_psk.png")
+        plt.close()
 
     def test_modulador_qpsk(self):
         modulador = Modulador(
@@ -376,6 +382,7 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.tight_layout()
         plt.grid()
         plt.savefig("images/tests/camada_fisica/transmissor_modulacao_qpsk.png")
+        plt.close()
 
     def test_modulador_16qam(self):
         modulador = Modulador(
@@ -437,6 +444,7 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.tight_layout()
         plt.grid()
         plt.savefig("images/tests/camada_fisica/transmissor_modulacao_16qam.png")
+        plt.close()
 
 
 if __name__ == "__main__":

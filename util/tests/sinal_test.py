@@ -138,6 +138,7 @@ class TestFonteDeDados(unittest.TestCase):
         plt.grid()
         plt.tight_layout()
         plt.savefig("images/tests/camada_fisica/sinal_com_curva_sigma.png")
+        plt.close()
 
         # Verifica se o comprimento do sinal está correto
         self.assertEqual(len(sinal_com_curva), len(simbolos))

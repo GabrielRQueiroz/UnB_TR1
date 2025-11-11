@@ -26,7 +26,7 @@ class Modulador(TransmissorBase):
         bits_por_simbolo: int = 1,
         tensao_pico: float = 3.3,
         taxa_amostragem: int = 1000,
-        debug=False,
+        debug: bool = False,
     ):
         super().__init__()
         if modulacao.lower() not in MODULADOCOES:

@@ -67,6 +67,7 @@ class TestCodificacoes(unittest.TestCase):
         plt.grid()
         plt.tight_layout()
         plt.savefig("images/tests/camada_fisica/codificacao_nrz_polar.png")
+        plt.close()
 
     def test_bipolar(self):
         codificador = Bipolar()
@@ -136,6 +137,7 @@ class TestCodificacoes(unittest.TestCase):
         plt.grid()
         plt.tight_layout()
         plt.savefig("images/tests/camada_fisica/codificacao_bipolar.png")
+        plt.close()
 
     def test_manchester(self):
         codificador = Manchester()
@@ -196,6 +198,7 @@ class TestCodificacoes(unittest.TestCase):
         plt.grid()
         plt.tight_layout()
         plt.savefig("images/tests/camada_fisica/codificacao_manchester.png")
+        plt.close()
 
 
 if __name__ == "__main__":

@@ -34,6 +34,7 @@ class PortadoraTest(unittest.TestCase):
         plt.grid()
         plt.tight_layout()
         plt.savefig("images/tests/camada_fisica/portadora_diferentes_frequencias.png")
+        plt.close()
 
         picos_p1, _ = find_peaks(sinal1)
         picos_p2, _ = find_peaks(sinal2)
@@ -62,6 +63,7 @@ class PortadoraTest(unittest.TestCase):
         plt.grid()
         plt.tight_layout()
         plt.savefig("images/tests/camada_fisica/portadora_sinais_mensagem.png")
+        plt.close()
 
         picos_sinal_1, _ = find_peaks(sinal_1)
         picos_sinal_8, _ = find_peaks(sinal_8)
@@ -85,6 +87,7 @@ class PortadoraTest(unittest.TestCase):
         plt.tight_layout()
         plt.grid()
         plt.savefig("images/tests/camada_fisica/portadora_modulacao_amplitude.png")
+        plt.close()
 
         picos_sinal, _ = find_peaks(sinal_modulado)
         self.assertEqual(len(picos_sinal), 2)
@@ -109,6 +112,7 @@ class PortadoraTest(unittest.TestCase):
         plt.tight_layout()
         plt.grid()
         plt.savefig("images/tests/camada_fisica/portadora_modulacao_frequencia.png")
+        plt.close()
 
         picos_sinal, _ = find_peaks(sinal_modulado)
         self.assertEqual(
@@ -131,6 +135,7 @@ class PortadoraTest(unittest.TestCase):
         plt.tight_layout()
         plt.grid()
         plt.savefig("images/tests/camada_fisica/portadora_modulacao_fase.png")
+        plt.close()
 
         picos_sinal, _ = find_peaks(sinal_modulado)
         self.assertEqual(len(picos_sinal), 6)

@@ -56,6 +56,7 @@ class TestModulacoes(unittest.TestCase):
         plt.grid()
         plt.tight_layout()
         plt.savefig("images/tests/camada_fisica/modulacao_ask.png")
+        plt.close()
 
     def test_fsk_gerar_parametros(self):
         sinal = Sinal(bits_por_simbolo=1)
@@ -109,6 +110,7 @@ class TestModulacoes(unittest.TestCase):
         plt.grid()
         plt.tight_layout()
         plt.savefig("images/tests/camada_fisica/modulacao_fsk.png")
+        plt.close()
 
     def test_psk_gerar_parametros(self):
         sinal = Sinal(bits_por_simbolo=1)
@@ -153,7 +155,6 @@ class TestModulacoes(unittest.TestCase):
         ]
 
         npt.assert_array_almost_equal(fases_8bits, np.array(fases_esperadas_8bits))
-        print(fases_8bits)
 
         plt.figure(figsize=(10, 12))
         plt.subplot(3, 1, 1)
@@ -176,6 +177,7 @@ class TestModulacoes(unittest.TestCase):
         plt.grid()
         plt.tight_layout()
         plt.savefig("images/tests/camada_fisica/modulacao_psk.png")
+        plt.close()
 
     def test_qpsk_gerar_parametros(self):
         sinal = Sinal(bits_por_simbolo=2)
@@ -205,6 +207,7 @@ class TestModulacoes(unittest.TestCase):
         plt.grid()
         plt.tight_layout()
         plt.savefig("images/tests/camada_fisica/modulacao_qpsk.png")
+        plt.close()
 
     def test_qam16_gerar_parametros(self):
         sinal = Sinal(bits_por_simbolo=4)
@@ -298,3 +301,4 @@ class TestModulacoes(unittest.TestCase):
         plt.grid()
         plt.tight_layout()
         plt.savefig("images/tests/camada_fisica/modulacao_16qam.png")
+        plt.close()

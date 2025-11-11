@@ -98,3 +98,4 @@ class GrayTest(unittest.TestCase):
             )
         plt.grid()
         plt.savefig("images/tests/camada_fisica/gray_binario.png")
+        plt.close()
