@@ -49,10 +49,10 @@ class Modulador(TransmissorBase):
     def taxa_amostragem(self) -> int:
         return self.portadora.taxa_amostragem
 
-    def processar_sinal(self, mensagem: str) -> np.ndarray:
+    def processar_sinal(self, bits: np.ndarray) -> np.ndarray:
         sinal = Sinal(self.bits_por_simbolo, self.taxa_amostragem)
         ruido = Ruido()
-        bits = sinal.gerar_sinal_binario(mensagem)
+        bits = sinal.sequencia_de_bits_para_simbolos(bits)
 
         simbolos_decimais = sinal.binario_para_decimal(bits)
 

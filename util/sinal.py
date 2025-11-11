@@ -21,16 +21,11 @@ class Sinal:
     def bits_por_simbolo(self, valor: int):
         self._bits_por_simbolo = valor
 
-    def gerar_sinal_binario(self, mensagem: str) -> np.ndarray:
+    @staticmethod
+    def gerar_sinal_binario(mensagem: str) -> np.ndarray:
         """Converte a mensagem em uma sequência de bits."""
         bits = "".join(format(ord(c), "08b") for c in mensagem)
         bits = np.array([int(b) for b in bits])
-
-        if self.bits_por_simbolo > 1:
-            num_simbolos = len(bits) // self.bits_por_simbolo
-            bits = bits[: num_simbolos * self.bits_por_simbolo]  # Trunca bits extras
-            bits = bits.reshape((num_simbolos, self.bits_por_simbolo))
-
         return bits
 
     def gerar_pulso_tensao(self, simbolos_decimais: np.ndarray) -> np.ndarray:
@@ -53,6 +48,17 @@ class Sinal:
         sinal_com_curva = np.array(sinal_com_curva)
 
         return sinal_com_curva
+
+    def sequencia_de_bits_para_simbolos(self, bits: np.ndarray) -> np.ndarray:  # TODO testar
+        """Agrupa a sequência de bits em símbolos de acordo com bits_por_simbolo."""
+        if self.bits_por_simbolo == 1:
+            return bits
+
+        num_simbolos = len(bits) // self.bits_por_simbolo
+        bits = bits[: num_simbolos * self.bits_por_simbolo]
+        simbolos = bits.reshape((num_simbolos, self.bits_por_simbolo))
+
+        return simbolos
 
     def binario_para_decimal(self, bits: np.ndarray) -> np.ndarray:
         """Converte uma sequência de símbolos em uma sequência de seus respectivos decimais, normalizados (de 0 a 1)."""

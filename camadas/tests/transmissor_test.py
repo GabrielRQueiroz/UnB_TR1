@@ -8,6 +8,7 @@ from scipy.signal import find_peaks
 from camadas.fisica.transmissor.banda_base import TransmissorBandaBase
 from camadas.fisica.transmissor.modulacoes.qam16 import QAM16
 from camadas.fisica.transmissor.modulador import Modulador
+from util.sinal import Sinal
 from util.gray import Gray
 
 
@@ -24,13 +25,19 @@ class TestTransmissorBandaBase(unittest.TestCase):
         )
 
         out_8bits = transmissor_8bits.processar_sinal(
-            mensagem="The quick brown fox jumps over the lazy dog"
+            bits=Sinal.gerar_sinal_binario(
+                "The quick brown fox jumps over the lazy dog"
+            )
         )
         out_4bits = transmissor_4bits.processar_sinal(
-            mensagem="The quick brown fox jumps over the lazy dog"
+            bits=Sinal.gerar_sinal_binario(
+                "The quick brown fox jumps over the lazy dog"
+            )
         )
         out_1bit = transmissor_1bit.processar_sinal(
-            mensagem="The quick brown fox jumps over the lazy dog"
+            bits=Sinal.gerar_sinal_binario(
+                "The quick brown fox jumps over the lazy dog"
+            )
         )
 
         self.assertEqual(out_8bits.shape[0], 43)  # 43 símbolos de 8 bits
@@ -59,7 +66,9 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.figure(figsize=(20, 6))
         plt.subplot(3, 1, 1)
         plt.title("Codificação NRZ Polar - 8 bits por símbolo")
-        tempo = np.arange(0, len(out_8bits) + 1) / transmissor_8bits.frequencia_de_simbolo
+        tempo = (
+            np.arange(0, len(out_8bits) + 1) / transmissor_8bits.frequencia_de_simbolo
+        )
         plt.plot(
             tempo,
             np.append(out_8bits.flatten(), out_8bits.flatten()[-1]),
@@ -70,7 +79,9 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.grid()
         plt.subplot(3, 1, 2)
         plt.title("Codificação NRZ Polar - 4 bits por símbolo")
-        tempo = np.arange(0, len(out_4bits) + 1) / transmissor_4bits.frequencia_de_simbolo
+        tempo = (
+            np.arange(0, len(out_4bits) + 1) / transmissor_4bits.frequencia_de_simbolo
+        )
         plt.plot(
             tempo,
             np.append(out_4bits.flatten(), out_4bits.flatten()[-1]),
@@ -106,13 +117,19 @@ class TestTransmissorBandaBase(unittest.TestCase):
         )
 
         out_8bits = transmissor_8bits.processar_sinal(
-            mensagem="The quick brown fox jumps over the lazy dog"
+            bits=Sinal.gerar_sinal_binario(
+                "The quick brown fox jumps over the lazy dog"
+            )
         )
         out_4bits = transmissor_4bits.processar_sinal(
-            mensagem="The quick brown fox jumps over the lazy dog"
+            bits=Sinal.gerar_sinal_binario(
+                "The quick brown fox jumps over the lazy dog"
+            )
         )
         out_1bit = transmissor_1bit.processar_sinal(
-            mensagem="The quick brown fox jumps over the lazy dog"
+            bits=Sinal.gerar_sinal_binario(
+                "The quick brown fox jumps over the lazy dog"
+            )
         )
 
         # [0, 1, 0, 1, 0, 1, 0, 0] = 64 + 16 + 4 = 84
@@ -150,7 +167,9 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.figure(figsize=(20, 6))
         plt.subplot(3, 1, 1)
         plt.title("Codificação Bipolar - 8 bits por símbolo")
-        tempo = np.arange(0, len(out_8bits) + 1) / transmissor_8bits.frequencia_de_simbolo
+        tempo = (
+            np.arange(0, len(out_8bits) + 1) / transmissor_8bits.frequencia_de_simbolo
+        )
         plt.plot(
             tempo,
             np.append(out_8bits.flatten(), out_8bits.flatten()[-1]),
@@ -161,7 +180,9 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.grid()
         plt.subplot(3, 1, 2)
         plt.title("Codificação Bipolar - 4 bits por símbolo")
-        tempo = np.arange(0, len(out_4bits) + 1) / transmissor_4bits.frequencia_de_simbolo
+        tempo = (
+            np.arange(0, len(out_4bits) + 1) / transmissor_4bits.frequencia_de_simbolo
+        )
         plt.plot(
             tempo,
             np.append(out_4bits.flatten(), out_4bits.flatten()[-1]),
@@ -197,13 +218,19 @@ class TestTransmissorBandaBase(unittest.TestCase):
         )
 
         out_8bits = transmissor_8bits.processar_sinal(
-            mensagem="The quick brown fox jumps over the lazy dog"
+            bits=Sinal.gerar_sinal_binario(
+                "The quick brown fox jumps over the lazy dog"
+            )
         )
         out_4bits = transmissor_4bits.processar_sinal(
-            mensagem="The quick brown fox jumps over the lazy dog"
+            bits=Sinal.gerar_sinal_binario(
+                "The quick brown fox jumps over the lazy dog"
+            )
         )
         out_1bit = transmissor_1bit.processar_sinal(
-            mensagem="The quick brown fox jumps over the lazy dog"
+            bits=Sinal.gerar_sinal_binario(
+                "The quick brown fox jumps over the lazy dog"
+            )
         )
 
         # 01010100 ^ 1 = 01010100
@@ -242,7 +269,9 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.figure(figsize=(20, 6))
         plt.subplot(3, 1, 1)
         plt.title("Codificação Manchester - 8 bits por símbolo")
-        tempo = np.arange(0, len(out_8bits) + 1) / transmissor_8bits.frequencia_de_simbolo
+        tempo = (
+            np.arange(0, len(out_8bits) + 1) / transmissor_8bits.frequencia_de_simbolo
+        )
         plt.plot(
             tempo,
             np.append(out_8bits.flatten(), out_8bits.flatten()[-1]),
@@ -253,7 +282,9 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.grid()
         plt.subplot(3, 1, 2)
         plt.title("Codificação Manchester - 4 bits por símbolo")
-        tempo = np.arange(0, len(out_4bits) + 1) / transmissor_4bits.frequencia_de_simbolo
+        tempo = (
+            np.arange(0, len(out_4bits) + 1) / transmissor_4bits.frequencia_de_simbolo
+        )
         plt.plot(
             tempo,
             np.append(out_4bits.flatten(), out_4bits.flatten()[-1]),
@@ -285,7 +316,7 @@ class TestTransmissorBandaBase(unittest.TestCase):
             debug=True,
         )
 
-        sinal_modulado = modulador.processar_sinal(mensagem="The")
+        sinal_modulado = modulador.processar_sinal(bits=Sinal.gerar_sinal_binario("The"))
 
         picos, _ = find_peaks(sinal_modulado)
 
@@ -315,7 +346,7 @@ class TestTransmissorBandaBase(unittest.TestCase):
             debug=True,
         )
 
-        sinal_modulado = modulador.processar_sinal(mensagem="The")
+        sinal_modulado = modulador.processar_sinal(bits=Sinal.gerar_sinal_binario("The"))
 
         picos, _ = find_peaks(sinal_modulado)
 
@@ -345,7 +376,7 @@ class TestTransmissorBandaBase(unittest.TestCase):
             debug=True,
         )
 
-        sinal_modulado = modulador.processar_sinal(mensagem="The")
+        sinal_modulado = modulador.processar_sinal(bits=Sinal.gerar_sinal_binario("The"))
 
         # Essa parte remove máximos locais
         picos, _ = find_peaks(sinal_modulado)
@@ -380,7 +411,7 @@ class TestTransmissorBandaBase(unittest.TestCase):
             debug=True,
         )
 
-        sinal_modulado = modulador.processar_sinal(mensagem="The")
+        sinal_modulado = modulador.processar_sinal(bits=Sinal.gerar_sinal_binario("The"))
 
         simbolos = [
             [0, 1],  # T
@@ -432,7 +463,7 @@ class TestTransmissorBandaBase(unittest.TestCase):
             debug=True,
         )
 
-        sinal_modulado = modulador.processar_sinal(mensagem="The")
+        sinal_modulado = modulador.processar_sinal(bits=Sinal.gerar_sinal_binario("The"))
 
         simbolos = [
             5,  # [0, 1, 0, 1]  T

@@ -37,11 +37,11 @@ class TransmissorBandaBase(TransmissorBase):
             debug  # Flag para printar sinal intermediário e pular adição de ruído
         )
 
-    def processar_sinal(self, mensagem: str) -> np.ndarray:
+    def processar_sinal(self, bits: np.ndarray) -> np.ndarray:
         # Converte a mensagem em uma sequência de bits
         sinal = Sinal(self.bits_por_simbolo, taxa_amostragem=self.taxa_amostragem)
         ruido = Ruido()
-        bits = sinal.gerar_sinal_binario(mensagem)
+        bits = sinal.sequencia_de_bits_para_simbolos(bits)
 
         # Codifica os bits usando o esquema de codificação selecionado
         sinal_codificado = self.codificador.codificar(bits)
