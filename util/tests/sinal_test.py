@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 from util.sinal import Sinal
 
 
-class TestFonteDeDados(unittest.TestCase):
+class TestSinal(unittest.TestCase):
     # T = "01010100"
     # h = "01101000"
     # e = "01100101"
@@ -75,9 +75,10 @@ class TestFonteDeDados(unittest.TestCase):
 
     def test_fluxo_bits_2_bits_por_simbolo(self):
         fonte = Sinal(bits_por_simbolo=2)
-        sinal = fonte.gerar_sinal_binario(
+        bits = fonte.gerar_sinal_binario(
             mensagem="The quick brown fox jumps over the lazy dog"
         )
+        sinal = fonte.sequencia_de_bits_para_simbolos(bits)
 
         # T = "01" "01" "01" "00" = 1110
         t = np.array(
@@ -93,9 +94,10 @@ class TestFonteDeDados(unittest.TestCase):
 
     def test_fluxo_bits_4_bits_por_simbolo(self):
         fonte = Sinal(bits_por_simbolo=4)
-        sinal = fonte.gerar_sinal_binario(
+        bits = fonte.gerar_sinal_binario(
             mensagem="The quick brown fox jumps over the lazy dog"
         )
+        sinal = fonte.sequencia_de_bits_para_simbolos(bits)
 
         # T = "0101" "0100" = 5 4
         t = np.array([[0, 1, 0, 1], [0, 1, 0, 0]])
@@ -104,10 +106,11 @@ class TestFonteDeDados(unittest.TestCase):
 
     def test_fluxo_bits_8_bits_por_simbolo(self):
         fonte = Sinal(bits_por_simbolo=8)
-        sinal = fonte.gerar_sinal_binario(
+        bits = fonte.gerar_sinal_binario(
             mensagem="The quick brown fox jumps over the lazy dog"
         )
-
+        sinal = fonte.sequencia_de_bits_para_simbolos(bits)
+        
         # T = "01010100" = 84
         t = np.array([[0, 1, 0, 1, 0, 1, 0, 0]])
 
