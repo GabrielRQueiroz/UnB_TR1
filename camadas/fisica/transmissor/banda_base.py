@@ -56,10 +56,12 @@ class TransmissorBandaBase(TransmissorBase):
             self.tensao_pico
         )  # Ajusta o nível de tensão do sinal codificado
 
+        sinal_codificado = sinal.gerar_pulso_tensao(
+            sinal_codificado
+        )
+
         if not self.debug:
-            sinal_codificado = sinal.gerar_pulso_tensao(
-                sinal_codificado
-            ) + ruido.gerar_ruido(
+            sinal_codificado += ruido.gerar_ruido(
                 sinal_codificado
             )  # Adiciona ruído ao sinal codificado
 

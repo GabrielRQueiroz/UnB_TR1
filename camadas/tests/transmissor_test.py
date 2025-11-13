@@ -8,8 +8,8 @@ from scipy.signal import find_peaks
 from camadas.fisica.transmissor.banda_base import TransmissorBandaBase
 from camadas.fisica.transmissor.modulacoes.qam16 import QAM16
 from camadas.fisica.transmissor.modulador import Modulador
-from util.sinal import Sinal
 from util.gray import Gray
+from util.sinal import Sinal
 
 
 class TestTransmissorBandaBase(unittest.TestCase):
@@ -136,39 +136,48 @@ class TestTransmissorBandaBase(unittest.TestCase):
         # 1/(2**8-1) = 0.00392156862
         # => 84 * 0.00392156862 = 0.32941176408
         npt.assert_array_almost_equal(
-            out_8bits[0], [0.32941176408 * transmissor_8bits.tensao_pico]
+            out_8bits[0][np.argmax(np.abs(out_8bits[0]))],
+            [0.32941176408 * transmissor_8bits.tensao_pico],
         )
-        npt.assert_array_equal(out_8bits[1], [0.0])
+        npt.assert_array_equal(np.max(np.abs(out_8bits[1])), [0.0])
+
         # [0, -1, -1, 0, -1, 0, 0, 0] = -64 -32 -8 = -104
         # 1/(2**8-1) = 0.00392156862
         # => -104 * 0.00392156862 = -0.40784313748
         npt.assert_array_almost_equal(
-            out_8bits[2], [-0.40784313748 * transmissor_8bits.tensao_pico]
+            out_8bits[2][np.argmax(np.abs(out_8bits[2]))],
+            [-0.40784313748 * transmissor_8bits.tensao_pico],
         )
 
         # [0, 1, 0, 1] = 4 + 1 = 5
         # 1/(2**4-1) = 0.06666666667
         # => 5 * 0.06666666667 = 0.33333333335
         npt.assert_array_almost_equal(
-            out_4bits[0], [0.33333333335 * transmissor_4bits.tensao_pico]
+            out_4bits[0][np.argmax(np.abs(out_4bits[0]))],
+            [0.33333333335 * transmissor_4bits.tensao_pico],
         )
-        npt.assert_array_equal(out_4bits[1], [0.0])
+        npt.assert_array_equal(out_4bits[1][np.argmax(np.abs(out_4bits[1]))], [0.0])
         # [0, -1, 0, 0] = -4
         # 1/(2**4-1) = 0.06666666667
         # => -4 * 0.06666666667 = -0.26666666668
         npt.assert_array_almost_equal(
-            out_4bits[2], [-0.26666666668 * transmissor_4bits.tensao_pico]
+            out_4bits[2][np.argmax(np.abs(out_4bits[2]))],
+            [-0.26666666668 * transmissor_4bits.tensao_pico],
         )
 
-        npt.assert_array_equal(out_1bit[0], [0.0])
-        npt.assert_array_equal(out_1bit[1], [0.0])
-        npt.assert_array_equal(out_1bit[2], [1.0 * transmissor_1bit.tensao_pico])
+        npt.assert_array_equal(out_1bit[0][np.argmax(np.abs(out_1bit[0]))], [0.0])
+        npt.assert_array_equal(out_1bit[1][np.argmax(np.abs(out_1bit[1]))], [0.0])
+        npt.assert_array_equal(
+            out_1bit[2][np.argmax(np.abs(out_1bit[2]))],
+            [1.0 * transmissor_1bit.tensao_pico],
+        )
 
         plt.figure(figsize=(20, 6))
         plt.subplot(3, 1, 1)
         plt.title("Codificação Bipolar - 8 bits por símbolo")
-        tempo = (
-            np.arange(0, len(out_8bits) + 1) / transmissor_8bits.frequencia_de_simbolo
+        # ValueError: x and y must have same first dimension, but have shapes (87,) and (86001,)
+        tempo = np.arange(0, len(out_8bits) * transmissor_8bits.taxa_amostragem + 1) / (
+            transmissor_8bits.frequencia_de_simbolo * transmissor_8bits.taxa_amostragem
         )
         plt.plot(
             tempo,
@@ -177,11 +186,12 @@ class TestTransmissorBandaBase(unittest.TestCase):
         )
         plt.xlabel("Tempo (s)")
         plt.ylabel("Amplitude")
+        plt.ylim(-4, 4)
         plt.grid()
         plt.subplot(3, 1, 2)
         plt.title("Codificação Bipolar - 4 bits por símbolo")
-        tempo = (
-            np.arange(0, len(out_4bits) + 1) / transmissor_4bits.frequencia_de_simbolo
+        tempo = np.arange(0, len(out_4bits) * transmissor_4bits.taxa_amostragem + 1) / (
+            transmissor_4bits.frequencia_de_simbolo * transmissor_4bits.taxa_amostragem
         )
         plt.plot(
             tempo,
@@ -192,8 +202,10 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.ylabel("Amplitude")
         plt.grid()
         plt.subplot(3, 1, 3)
-        tempo = np.arange(0, len(out_1bit) + 1) / transmissor_1bit.frequencia_de_simbolo
         plt.title("Codificação Bipolar - 1 bit por símbolo")
+        tempo = np.arange(0, len(out_1bit) * transmissor_1bit.taxa_amostragem + 1) / (
+            transmissor_1bit.frequencia_de_simbolo * transmissor_1bit.taxa_amostragem
+        )
         plt.plot(
             tempo,
             np.append(out_1bit.flatten(), out_1bit.flatten()[-1]),
@@ -316,7 +328,9 @@ class TestTransmissorBandaBase(unittest.TestCase):
             debug=True,
         )
 
-        sinal_modulado = modulador.processar_sinal(bits=Sinal.gerar_sinal_binario("The"))
+        sinal_modulado = modulador.processar_sinal(
+            bits=Sinal.gerar_sinal_binario("The")
+        )
 
         picos, _ = find_peaks(sinal_modulado)
 
@@ -346,7 +360,9 @@ class TestTransmissorBandaBase(unittest.TestCase):
             debug=True,
         )
 
-        sinal_modulado = modulador.processar_sinal(bits=Sinal.gerar_sinal_binario("The"))
+        sinal_modulado = modulador.processar_sinal(
+            bits=Sinal.gerar_sinal_binario("The")
+        )
 
         picos, _ = find_peaks(sinal_modulado)
 
@@ -376,7 +392,9 @@ class TestTransmissorBandaBase(unittest.TestCase):
             debug=True,
         )
 
-        sinal_modulado = modulador.processar_sinal(bits=Sinal.gerar_sinal_binario("The"))
+        sinal_modulado = modulador.processar_sinal(
+            bits=Sinal.gerar_sinal_binario("The")
+        )
 
         # Essa parte remove máximos locais
         picos, _ = find_peaks(sinal_modulado)
@@ -411,7 +429,9 @@ class TestTransmissorBandaBase(unittest.TestCase):
             debug=True,
         )
 
-        sinal_modulado = modulador.processar_sinal(bits=Sinal.gerar_sinal_binario("The"))
+        sinal_modulado = modulador.processar_sinal(
+            bits=Sinal.gerar_sinal_binario("The")
+        )
 
         simbolos = [
             [0, 1],  # T
@@ -463,7 +483,9 @@ class TestTransmissorBandaBase(unittest.TestCase):
             debug=True,
         )
 
-        sinal_modulado = modulador.processar_sinal(bits=Sinal.gerar_sinal_binario("The"))
+        sinal_modulado = modulador.processar_sinal(
+            bits=Sinal.gerar_sinal_binario("The")
+        )
 
         simbolos = [
             5,  # [0, 1, 0, 1]  T
@@ -514,6 +536,160 @@ class TestTransmissorBandaBase(unittest.TestCase):
         plt.tight_layout()
         plt.grid()
         plt.savefig("images/tests/camada_fisica/transmissor_modulacao_16qam.png")
+        plt.close()
+
+    def test_banda_base_dicionario_de_formas_de_onda(self):
+        transmissor = TransmissorBandaBase(
+            codificacao="nrz_polar", bits_por_simbolo=4, debug=True
+        )
+
+        dicionario = transmissor.gerar_dicionario_de_formas_de_onda()
+
+        self.assertEqual(len(dicionario), 16)  # 4 bits por símbolo => 16 símbolos
+
+        plt.figure(figsize=(20, 12))
+        for simbolo, forma_de_onda in dicionario.items():
+            self.assertEqual(
+                forma_de_onda.shape[0],
+                transmissor.frequencia_de_simbolo,
+            )  # Cada forma de onda deve ter duração de 1 símbolo
+            plt.subplot(4, 4, simbolo + 1)
+            plt.title(f"Forma de onda do símbolo {simbolo} na codificação NRZ Polar")
+            plt.ylim(-4, 4)
+            plt.plot(forma_de_onda.flatten())
+            plt.xlabel("Amostras")
+            plt.ylabel("Amplitude")
+            plt.grid()
+            plt.tight_layout()
+        plt.savefig(
+            "images/tests/camada_fisica/transmissor_banda_base_forma_de_onda_simbolo.png"
+        )
+        plt.close()
+
+    def test_modulador_dicionario_de_formas_de_onda_qpsk(self):
+        modulador = Modulador(
+            tensao_pico=3.3,
+            frequencia_portadora=1.0,
+            bits_por_simbolo=2,
+            modulacao="qpsk",
+            debug=True,
+        )
+
+        dicionario = modulador.gerar_dicionario_de_formas_de_onda()
+
+        self.assertEqual(len(dicionario), 4)  # 2 bits por símbolo => 4 símbolos
+
+        plt.figure(figsize=(10, 8))
+        for simbolo, forma_de_onda in dicionario.items():
+            self.assertEqual(
+                forma_de_onda.shape[0],
+                modulador.portadora.taxa_amostragem,
+            )  # Cada forma de onda deve ter duração de 1 símbolo
+            plt.subplot(2, 2, simbolo + 1)
+            plt.title(f"Forma de onda do símbolo {simbolo} na modulação QPSK")
+            plt.plot(forma_de_onda)
+            plt.xlabel("Amostras")
+            plt.ylabel("Amplitude")
+            plt.grid()
+            plt.tight_layout()
+        plt.savefig(
+            "images/tests/camada_fisica/transmissor_forma_de_onda_simbolo_qpsk.png"
+        )
+        plt.close()
+
+    def test_modulador_dicionario_de_formas_de_onda_16qam(self):
+        modulador = Modulador(
+            tensao_pico=3.3,
+            frequencia_portadora=1.0,
+            bits_por_simbolo=4,
+            modulacao="16-qam",
+            debug=True,
+        )
+
+        dicionario = modulador.gerar_dicionario_de_formas_de_onda()
+
+        self.assertEqual(len(dicionario), 16)  # 4 bits por símbolo => 16 símbolos
+
+        plt.figure(figsize=(20, 12))
+        for simbolo, forma_de_onda in dicionario.items():
+            self.assertEqual(
+                forma_de_onda.shape[0],
+                modulador.portadora.taxa_amostragem,
+            )  # Cada forma de onda deve ter duração de 1 símbolo
+            plt.subplot(4, 4, simbolo + 1)
+            plt.title(f"Forma de onda do símbolo {simbolo} na modulação 16-QAM")
+            plt.plot(forma_de_onda)
+            plt.ylim(-4, 4)
+            plt.xlabel("Amostras")
+            plt.ylabel("Amplitude")
+            plt.grid()
+            plt.tight_layout()
+        plt.savefig(
+            "images/tests/camada_fisica/transmissor_forma_de_onda_simbolo_16qam.png"
+        )
+        plt.close()
+
+    def test_modulador_dicionario_de_formas_de_onda_ask(self):
+        modulador = Modulador(
+            tensao_pico=3.3,
+            frequencia_portadora=1.0,
+            bits_por_simbolo=4,
+            modulacao="ask",
+            debug=True,
+        )
+
+        dicionario = modulador.gerar_dicionario_de_formas_de_onda()
+
+        self.assertEqual(len(dicionario), 16)  # 4 bits por símbolo => 16 símbolos
+
+        plt.figure(figsize=(20, 12))
+        for simbolo, forma_de_onda in dicionario.items():
+            self.assertEqual(
+                forma_de_onda.shape[0],
+                modulador.portadora.taxa_amostragem,
+            )  # Cada forma de onda deve ter duração de 1 símbolo
+            plt.subplot(4, 4, simbolo + 1)
+            plt.title(f"Forma de onda do símbolo {simbolo} na modulação ASK")
+            plt.plot(forma_de_onda)
+            plt.ylim(-4, 4)
+            plt.xlabel("Amostras")
+            plt.ylabel("Amplitude")
+            plt.grid()
+            plt.tight_layout()
+        plt.savefig(
+            "images/tests/camada_fisica/transmissor_forma_de_onda_simbolo_ask.png"
+        )
+        plt.close()
+
+    def test_modulador_dicionario_de_formas_de_onda_fsk(self):
+        modulador = Modulador(
+            tensao_pico=3.3,
+            frequencia_portadora=1.0,
+            bits_por_simbolo=4,
+            modulacao="fsk",
+            debug=True,
+        )
+
+        dicionario = modulador.gerar_dicionario_de_formas_de_onda()
+
+        self.assertEqual(len(dicionario), 16)  # 4 bits por símbolo => 16 símbolos
+
+        plt.figure(figsize=(20, 12))
+        for simbolo, forma_de_onda in dicionario.items():
+            self.assertEqual(
+                forma_de_onda.shape[0],
+                modulador.portadora.taxa_amostragem,
+            )  # Cada forma de onda deve ter duração de 1 símbolo
+            plt.subplot(4, 4, simbolo + 1)
+            plt.title(f"Forma de onda do símbolo {simbolo} na modulação FSK")
+            plt.plot(forma_de_onda)
+            plt.xlabel("Amostras")
+            plt.ylabel("Amplitude")
+            plt.grid()
+            plt.tight_layout()
+        plt.savefig(
+            "images/tests/camada_fisica/transmissor_forma_de_onda_simbolo_fsk.png"
+        )
         plt.close()
 
 

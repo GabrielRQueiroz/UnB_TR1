@@ -49,7 +49,9 @@ class Sinal:
 
         return sinal_com_curva
 
-    def sequencia_de_bits_para_simbolos(self, bits: np.ndarray) -> np.ndarray:  # TODO testar
+    def sequencia_de_bits_para_simbolos(
+        self, bits: np.ndarray
+    ) -> np.ndarray:  # TODO testar
         """Agrupa a sequência de bits em símbolos de acordo com bits_por_simbolo."""
         if self.bits_por_simbolo == 1:
             return bits
@@ -78,3 +80,10 @@ class Sinal:
                 sinal.append(nivel_tensao)
 
         return np.array(sinal)
+
+    def decimal_para_binario(self, decimal: int) -> np.ndarray:
+        """Converte um número decimal em sua representação binária com bits_por_simbolo bits."""
+        formato = "{0:0" + str(self.bits_por_simbolo) + "b}"
+        binario_str = formato.format(decimal)
+        binario = np.array([int(bit) for bit in binario_str])
+        return binario
