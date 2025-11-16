@@ -59,4 +59,9 @@ class Demodulador(ReceptorBase):
                     
             simbolos_demodulados.append(sinal.decimal_para_binario(simbolo_deteccao))
 
-        return np.array(simbolos_demodulados).flatten()
+        if self.bits_por_simbolo > 1:
+            simbolos_demodulados = np.array(simbolos_demodulados)
+        else:
+            simbolos_demodulados = np.array(simbolos_demodulados).flatten()
+        
+        return simbolos_demodulados
