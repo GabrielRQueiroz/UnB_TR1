@@ -7,7 +7,7 @@ from util.sinal import Sinal
 
 from .base import TransmissorBase
 
-MODULADOCOES = {
+MODULACOES = {
     "ask": ASK,
     "fsk": FSK,
     "psk": PSK,
@@ -29,9 +29,9 @@ class Modulador(TransmissorBase):
         debug: bool = False,
     ):
         super().__init__()
-        if modulacao.lower() not in MODULADOCOES:
+        if modulacao.lower() not in MODULACOES:
             raise ValueError(f"Modulação '{modulacao}' não implementada.")
-        self.modulador = MODULADOCOES[modulacao]
+        self.modulador = MODULACOES[modulacao]
         self.bits_por_simbolo = bits_por_simbolo
         self.modulacao = modulacao
         self.portadora = Portadora(
