@@ -19,7 +19,6 @@ class TransmissorBase(ABC):
         dicionario: dict[int, np.ndarray] = {}
 
         for simbolo in simbolos:
-            print(simbolo)
             bits = sinal.decimal_para_binario(simbolo)
             sinal_eletrico = self.processar_sinal(bits)
             dicionario[simbolo] = sinal_eletrico
