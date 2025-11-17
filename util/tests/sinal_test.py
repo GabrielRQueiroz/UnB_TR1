@@ -110,16 +110,16 @@ class TestSinal(unittest.TestCase):
             mensagem="The quick brown fox jumps over the lazy dog"
         )
         sinal = fonte.sequencia_de_bits_para_simbolos(bits)
-        
+
         # T = "01010100" = 84
         t = np.array([[0, 1, 0, 1, 0, 1, 0, 0]])
 
         npt.assert_array_equal(sinal[:1], t)
 
-    def test_gerar_curva_tensao(self):
-        fonte = Sinal(bits_por_simbolo=2)
-        simbolos = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
-        sinal_com_curva = fonte.gerar_pulso_tensao(simbolos, tempo_de_simbolo=1)
+    def test_gerar_curva_tensao_1bit(self):
+        fonte = Sinal(bits_por_simbolo=1)
+        simbolos = fonte.binario_para_decimal(np.array([0, 1, 1, 0, 0, 0, 1, 0]))
+        sinal_com_curva = fonte.gerar_pulso_tensao(simbolos)
 
         # Plotar 1) o sinal completo e 2) cada símbolo individualmente
         plt.figure(figsize=(10, 6))
@@ -131,10 +131,49 @@ class TestSinal(unittest.TestCase):
         plt.grid()
         plt.subplot(2, 1, 2)
         plt.title("Pulsos gerados por cada símbolo")
-        plt.plot(sinal_com_curva[0], label='"00"')
-        plt.plot(sinal_com_curva[1], label='"01"')
-        plt.plot(sinal_com_curva[2], label='"10"')
-        plt.plot(sinal_com_curva[3], label='"11"')
+        plt.plot(sinal_com_curva[0], label='"01"')
+        plt.plot(
+            sinal_com_curva[1],
+            label='"10"',
+        )
+        plt.plot(
+            sinal_com_curva[2],
+            label='"00"',
+        )
+        plt.plot(
+            sinal_com_curva[3],
+            label='"10"',
+        )
+        plt.xlabel("Amostras")
+        plt.ylabel("Tensão")
+        plt.legend()
+        plt.grid()
+        plt.tight_layout()
+        plt.savefig("images/tests/camada_fisica/sinal_com_curva_tensao_1bit.png")
+        plt.close()
+
+        self.assertEqual(len(sinal_com_curva), fonte.taxa_amostragem * len(simbolos))
+
+    def test_gerar_curva_tensao_4bit(self):
+        fonte = Sinal(bits_por_simbolo=4)
+        simbolos = fonte.binario_para_decimal(np.array([[0, 1, 0, 1], [0, 1, 0, 0]]))
+        sinal_com_curva = fonte.gerar_pulso_tensao(simbolos, tempo_de_simbolo=1)
+
+        # Plotar 1) o sinal completo e 2) cada símbolo individualmente
+        plt.figure(figsize=(10, 6))
+        plt.subplot(2, 1, 1)
+        plt.title("Pulsos de tensão (4 bits por símbolo)")
+        plt.plot(sinal_com_curva.flatten())
+        plt.xlabel("Amostras")
+        plt.ylabel("Tensão")
+        plt.grid()
+        plt.subplot(2, 1, 2)
+        plt.title("Pulsos gerados por cada símbolo")
+        plt.plot(sinal_com_curva[0], label='"0101"')
+        plt.plot(
+            sinal_com_curva[1],
+            label='"0100"',
+        )
         plt.xlabel("Amostras")
         plt.ylabel("Tensão")
         plt.legend()
@@ -143,33 +182,9 @@ class TestSinal(unittest.TestCase):
         plt.savefig("images/tests/camada_fisica/sinal_com_curva_tensao.png")
         plt.close()
 
-        # Verifica se o comprimento do sinal está correto
+        self.assertEqual(len(sinal_com_curva[0]), fonte.taxa_amostragem)
         self.assertEqual(len(sinal_com_curva), len(simbolos))
-        self.assertEqual(max(sinal_com_curva[0]), 0)
-        self.assertEqual(max(sinal_com_curva[1]), 1)
-        self.assertEqual(max(sinal_com_curva[2]), 2)
-        self.assertEqual(max(sinal_com_curva[3]), 3)
 
-    def test_gerar_curva_tensao_1bit(self):
-        fonte = Sinal(bits_por_simbolo=1)
-        simbolos = np.array([0, 1, 1, 0, 0, 0, 1, 0])
-        sinal_com_curva = fonte.gerar_pulso_tensao(simbolos, tempo_de_simbolo=1)
-
-        # Plotar 1) o sinal completo e 2) cada símbolo individualmente
-        plt.figure(figsize=(10, 6))
-        plt.title("Pulsos de tensão (1 bit por símbolo)")
-        plt.plot(sinal_com_curva.flatten())
-        plt.xlabel("Amostras")
-        plt.ylabel("Tensão")
-        plt.grid()
-        plt.tight_layout()
-        plt.savefig("images/tests/camada_fisica/sinal_com_curva_tensao_1bit.png")
-        plt.close()
-
-        # Verifica se o comprimento do sinal está correto
-        self.assertEqual(len(sinal_com_curva), 1)
-        self.assertEqual(max(sinal_com_curva[0]), 0)
-        self.assertEqual(max(sinal_com_curva[1]), 1)
 
 if __name__ == "__main__":
     unittest.main()

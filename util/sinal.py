@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.stats import norm
+from matplotlib import pyplot as plt
 from scipy.integrate import quad
 
 
@@ -30,40 +30,24 @@ class Sinal:
         return bits
 
     def gerar_pulso_tensao(
-        self, simbolos: np.ndarray, tempo_de_simbolo: float
+        self, simbolos_decimais: np.ndarray, tempo_de_simbolo: float = 1.0
     ) -> np.ndarray:
         """
         Gera uma curva de tensão simulando um pulso elétrico utilizando série de Fourier
-        'Simbolos' é um array com os símbolos bits -> [[simbolo1], [simbolo2], [simbolo3], ...].
+        simbolos_decimais é um array com os símbolos em decimal -> [simbolo1, simbolo2, simbolo3, ...].
         Devolve um array numpy com a forma de onda de cada símbolo -> [[forma_de_onda1], [forma_de_onda2], [forma_de_onda3], ...].
         """
-        sinal = []
 
-        if len(simbolos.shape) > 1:
-            t = np.linspace(
-                0,
-                tempo_de_simbolo,
-                int(self.taxa_amostragem * tempo_de_simbolo),
-                endpoint=False,
-            )
-            for simbolo in simbolos:
-                pulso = self.__serie_de_fourier(
-                    simbolo, t, tempo_de_simbolo, harmonicas=8
-                )
-                sinal.append(pulso)
-        else:
-            t = np.linspace(
-                0,
-                tempo_de_simbolo,
-                int(self.taxa_amostragem * tempo_de_simbolo),
-                endpoint=False,
-            )
-            pulso = self.__serie_de_fourier(
-                simbolos, t, tempo_de_simbolo, harmonicas=8
-            )
-            sinal.append(pulso)
+        if self.bits_por_simbolo == 1:
+            simbolos_decimais = np.reshape(
+                simbolos_decimais, (-1, 1)
+            )  # trata cada bit como um símbolo
 
-        return np.array(sinal)
+        forma_de_onda = self.__serie_de_fourier(
+            simbolos_decimais, tempo_de_simbolo=tempo_de_simbolo, harmonicas=8
+        )
+
+        return forma_de_onda
 
     def sequencia_de_bits_para_simbolos(
         self, bits: np.ndarray
@@ -93,7 +77,7 @@ class Sinal:
         else:
             for bit in bits:
                 nivel_tensao = bit * passo_de_tensao
-                sinal = nivel_tensao
+                sinal.append(nivel_tensao)
 
         return np.array(sinal)
 
@@ -105,40 +89,34 @@ class Sinal:
         return binario
 
     def __serie_de_fourier(
-        self, bits: np.ndarray, t: np.ndarray, T: float, harmonicas: int
+        self, simbolos: np.ndarray, tempo_de_simbolo: float, harmonicas: int
     ) -> np.ndarray:
         """Gera uma série de Fourier."""
-        a_n = 0
-        b_n = 0
-        c = 2 / T * len(np.where(bits == 1)[0])
+        periodo = len(simbolos) * tempo_de_simbolo
+        t = np.linspace(0, periodo, int(periodo * self.taxa_amostragem), endpoint=False)
+        c = 2 / periodo * np.sum(simbolos)
 
-        resultado: np.ndarray = np.zeros_like(t)
+        resultado = np.zeros_like(t) + c / 2
+
         for n in range(1, harmonicas + 1):
-            for i, bit in enumerate(bits):
-                if bit == 0:
-                    continue
-                else:
-                    t0 = i * T / len(bits)
-                    tf = (i + 1) * T / len(bits)
-                    a_n += (
-                        np.sin(2 * np.pi * n * t / T)
-                        / (np.pi * n)
-                        * (
-                            np.cos(2 * np.pi * n * t0 / T)
-                            - np.cos(2 * np.pi * n * tf / T)
-                        )
-                    )
-                    b_n += (
-                        np.cos(2 * np.pi * n * t / T)
-                        / (np.pi * n)
-                        * (
-                            np.sin(2 * np.pi * n * tf / T)
-                            - np.sin(2 * np.pi * n * t0 / T)
-                        )
-                    )
+            y_an = lambda t: simbolos[int(t // tempo_de_simbolo)] * np.sin(
+                2 * np.pi * n * t / periodo
+            )
+            y_bn = lambda t: simbolos[int(t // tempo_de_simbolo)] * np.cos(
+                2 * np.pi * n * t / periodo
+            )
 
-            resultado += a_n + b_n
+            an = (
+                np.sin(2 * np.pi * n * t / periodo)
+                * (2.0 / periodo)
+                * np.array(quad(y_an, 0, periodo))[0]  # descarta o valor do erro
+            )
+            bn = (
+                np.cos(2 * np.pi * n * t / periodo)
+                * (2.0 / periodo)
+                * np.array(quad(y_bn, 0, periodo))[0]  # descarta o valor do erro
+            )
 
-        resultado += c / 2
+            resultado += an + bn
 
-        return resultado
+        return np.reshape(resultado, (len(simbolos), -1))
