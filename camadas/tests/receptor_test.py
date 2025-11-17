@@ -2,6 +2,8 @@ import unittest
 
 from camadas.fisica.receptor.demodulador import Demodulador
 from camadas.fisica.transmissor.modulador import Modulador
+from camadas.fisica.receptor.decodificador import Decodificador
+from camadas.fisica.transmissor.banda_base import TransmissorBandaBase
 
 import numpy as np
 import numpy.testing as npt
@@ -58,7 +60,7 @@ class TestReceptor(unittest.TestCase):
         expected_bits = np.array([0, 1, 0, 1, 0, 1, 0, 0])
 
         npt.assert_array_equal(bits_demodulados, expected_bits)
-        
+
     def test_demodulador_ask_4bits(self):
         modulador = Modulador(
             modulacao="ask",
@@ -155,7 +157,7 @@ class TestReceptor(unittest.TestCase):
         expected_bits = np.array([0, 1, 0, 1, 0, 1, 0, 0])
 
         npt.assert_array_equal(bits_demodulados, expected_bits)
-        
+
     def test_demodulador_fsk_4bits(self):
         modulador = Modulador(
             modulacao="fsk",
@@ -200,11 +202,11 @@ class TestReceptor(unittest.TestCase):
         plt.tight_layout()
         plt.savefig("images/tests/camada_fisica/demodulador_fsk_4bits.png")
         plt.close()
-        
+
         expected_bits = np.array(
             [[0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 0, 1], [1, 0, 1, 0]]
         )
-        
+
         npt.assert_array_equal(bits_demodulados, expected_bits)
 
     def test_demodulador_psk(self):
@@ -297,11 +299,11 @@ class TestReceptor(unittest.TestCase):
         plt.tight_layout()
         plt.savefig("images/tests/camada_fisica/demodulador_psk_4bits.png")
         plt.close()
-        
+
         expected_bits = np.array(
             [[0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 0, 1], [1, 0, 1, 0]]
         )
-        
+
         npt.assert_array_equal(bits_demodulados, expected_bits)
 
     def test_demodulador_qpsk(self):
@@ -404,6 +406,155 @@ class TestReceptor(unittest.TestCase):
         )
 
         npt.assert_array_equal(bits_demodulados, expected_bits)
+
+    def test_decodificador_nrz_polar(self):
+        # Gera o sinal codificado em NRZ Polar
+        banda_base = TransmissorBandaBase(
+            codificacao="nrz_polar",
+            bits_por_simbolo=1,
+            tensao_pico=3.3,
+            taxa_amostragem=1000,
+        )
+
+        sinal_codificado = banda_base.processar_sinal(
+            bits=np.array([0, 1, 0, 1, 0, 1, 0, 0])
+        )  # "T"
+
+        decodificador = Decodificador(
+            codificacao="nrz_polar",
+            bits_por_simbolo=1,
+            tensao_pico=3.3,
+            taxa_amostragem=1000,
+        )
+
+        bits_decodificados = decodificador.processar_sinal(sinal_codificado)
+
+        expected_bits = np.array([0, 1, 0, 1, 0, 1, 0, 0])
+
+        plt.figure(figsize=(10, 6))
+        plt.subplot(2, 1, 1)
+        plt.title("Sinal Codificado (NRZ Polar)")
+        plt.plot(sinal_codificado.flatten())
+        envelope_superior = []
+        envelope_inferior = []
+        for bit in bits_decodificados:
+            forma_onda = banda_base.gerar_dicionario_de_formas_de_onda().get(bit)
+            envelope_superior.append(forma_onda + 10 ** (1 / 20))  # 1 dBV
+            envelope_inferior.append(forma_onda - 10 ** (1 / 20))  # 1 dBV
+        plt.plot(np.array(envelope_superior).flatten(), color="black", linestyle="--")
+        plt.plot(np.array(envelope_inferior).flatten(), color="black", linestyle="--")
+        plt.subplot(2, 1, 2)
+        plt.title("Bits Decodificados")
+        plt.plot(np.append(bits_decodificados, bits_decodificados[-1]), drawstyle="steps-post")
+        plt.tight_layout()
+        plt.savefig("images/tests/camada_fisica/decodificador_nrz_polar.png")
+        plt.close()
+
+        npt.assert_array_equal(bits_decodificados, expected_bits)
+
+    def test_decodificador_manchester(self):
+        # Gera o sinal codificado em Manchester
+        banda_base = TransmissorBandaBase(
+            codificacao="manchester",
+            bits_por_simbolo=1,
+            tensao_pico=3.3,
+            taxa_amostragem=1000,
+        )
+        sinal_codificado = banda_base.processar_sinal(
+            bits=np.array([0, 1, 0, 1, 0, 1, 0, 0])
+        )  # "T"
+
+        print(sinal_codificado.shape)
+
+        decodificador = Decodificador(
+            codificacao="manchester",
+            bits_por_simbolo=1,
+            tensao_pico=3.3,
+            taxa_amostragem=1000,
+        )
+        bits_decodificados = decodificador.processar_sinal(sinal_codificado)
+        expected_bits = np.array([0, 1, 0, 1, 0, 1, 0, 0])
+        plt.figure(figsize=(10, 6))
+        plt.subplot(3, 1, 1)
+        plt.title("Sinal Codificado (Manchester)")
+        plt.plot(sinal_codificado.flatten())
+        envelope_superior = []
+        envelope_inferior = []
+        for bit in bits_decodificados:
+            forma_onda = banda_base.gerar_dicionario_de_formas_de_onda().get(bit)
+            envelope_superior.append(forma_onda + 10 ** (1 / 20))  # 1 dBV
+            envelope_inferior.append(forma_onda - 10 ** (1 / 20))  # 1 dBV
+        plt.plot(np.array(envelope_superior).flatten(), color="black", linestyle="--")
+        plt.plot(np.array(envelope_inferior).flatten(), color="black", linestyle="--")
+        plt.subplot(3, 1, 2)
+        plt.title("Bits Decodificados")
+        plt.plot(np.append(bits_decodificados, bits_decodificados[-1]), drawstyle="steps-post")
+        plt.subplot(3, 1, 3)
+        plt.title("Sinal de Clock")
+        clock = np.tile(
+            np.concatenate((np.ones(500), np.zeros(500))),
+            8,
+        )
+        plt.plot(clock[: len(sinal_codificado.flatten())])
+        plt.tight_layout()
+        plt.savefig("images/tests/camada_fisica/decodificador_manchester.png")
+        plt.close()
+
+        npt.assert_array_equal(bits_decodificados, expected_bits)
+
+    def test_decodificador_bipolar(self):
+        # Gera o sinal codificado em Bipolar
+        banda_base = TransmissorBandaBase(
+            codificacao="bipolar",
+            bits_por_simbolo=1,
+            tensao_pico=3.3,
+            taxa_amostragem=1000,
+        )
+        sinal_codificado = banda_base.processar_sinal(
+            bits=np.array([0, 1, 0, 1, 0, 1, 0, 0])
+        )  # "T"
+
+        decodificador = Decodificador(
+            codificacao="bipolar",
+            bits_por_simbolo=1,
+            tensao_pico=3.3,
+            taxa_amostragem=1000,
+        )
+        bits_decodificados = decodificador.processar_sinal(sinal_codificado)
+        expected_bits = np.array([0, 1, 0, 1, 0, 1, 0, 0])
+        plt.figure(figsize=(10, 6))
+        plt.subplot(3, 1, 1)
+        plt.title("Sinal Codificado (Bipolar)")
+        plt.plot(sinal_codificado.flatten())
+        envelope_superior = []
+        envelope_inferior = []
+        flip = False
+        for bit in bits_decodificados:
+            forma_onda = banda_base.gerar_dicionario_de_formas_de_onda().get(bit)
+            if flip:
+                forma_onda = forma_onda * (-1)
+            envelope_superior.append(forma_onda + 10 ** (1 / 20))  # 1 dBV
+            envelope_inferior.append(forma_onda - 10 ** (1 / 20))  # 1 dBV
+            if bit == 1:
+                flip = not flip
+        plt.plot(np.array(envelope_superior).flatten(), color="black", linestyle="--")
+        plt.plot(np.array(envelope_inferior).flatten(), color="black", linestyle="--")
+        plt.subplot(3, 1, 2)
+        plt.title("Bits Decodificados")
+        plt.plot(np.append(bits_decodificados, bits_decodificados[-1]), drawstyle="steps-post")
+        # Sinal de clock
+        plt.subplot(3, 1, 3)
+        plt.title("Sinal de Clock")
+        clock = np.tile(
+            np.concatenate((np.ones(500), np.zeros(500))),
+            8,
+        )
+        plt.plot(clock[: len(sinal_codificado.flatten())])
+        plt.tight_layout()
+        plt.savefig("images/tests/camada_fisica/decodificador_bipolar.png")
+        plt.close()
+
+        npt.assert_array_equal(bits_decodificados, expected_bits)
 
 
 if __name__ == "__main__":

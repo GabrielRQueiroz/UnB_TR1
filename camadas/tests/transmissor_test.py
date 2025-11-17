@@ -138,7 +138,7 @@ class TestTransmissorBandaBase(unittest.TestCase):
                 "The quick brown fox jumps over the lazy dog"
             )
         )
-        
+
         # [0, 1, 0, 1, 0, 1, 0, 0] = 64 + 16 + 4 = 84
         # 1/(2**8-1) = 0.00392156862
         # => 84 * 0.00392156862 = 0.32941176408
@@ -146,7 +146,7 @@ class TestTransmissorBandaBase(unittest.TestCase):
             out_8bits[0][np.argmax(np.abs(out_8bits[0]))],
             [0.32941176408 * transmissor_8bits.tensao_pico],
         )
-                                
+
         npt.assert_array_equal(np.max(np.abs(out_8bits[1])), [0.0])
 
         # [0, -1, -1, 0, -1, 0, 0, 0] = -64 -32 -8 = -104
@@ -289,11 +289,11 @@ class TestTransmissorBandaBase(unittest.TestCase):
 
         npt.assert_array_equal(
             out_1bit[0][np.argmax(np.abs(out_1bit[0]))],
-            [1.0 * transmissor_1bit.tensao_pico]
+            [1.0 * transmissor_1bit.tensao_pico],
         )
         npt.assert_array_equal(
             out_1bit[1][np.argmax(np.abs(out_1bit[1]))],
-            [0.0 * transmissor_1bit.tensao_pico]
+            [0.0 * transmissor_1bit.tensao_pico],
         )
 
         plt.figure(figsize=(20, 6))
@@ -584,6 +584,92 @@ class TestTransmissorBandaBase(unittest.TestCase):
             plt.tight_layout()
         plt.savefig(
             "images/tests/camada_fisica/transmissor_banda_base_forma_de_onda_simbolo.png"
+        )
+        plt.close()
+
+    def test_banda_base_dicionario_de_formas_de_onda_manchester(self):
+        transmissor = TransmissorBandaBase(
+            codificacao="manchester", bits_por_simbolo=4, debug=True
+        )
+
+        dicionario = transmissor.gerar_dicionario_de_formas_de_onda()
+
+        self.assertEqual(len(dicionario), 16)  # 4 bits por símbolo => 16 símbolos
+
+        plt.figure(figsize=(20, 12))
+        for simbolo, forma_de_onda in dicionario.items():
+            self.assertEqual(
+                forma_de_onda.shape[0],
+                transmissor.frequencia_de_simbolo * 2,  # *2 devido ao clock
+            )  # Cada forma de onda deve ter duração de 1 símbolo
+            plt.subplot(4, 4, simbolo + 1)
+            plt.title(f"Forma de onda do símbolo {simbolo} na codificação Manchester")
+            plt.ylim(-4, 4)
+            plt.plot(forma_de_onda.flatten())
+            plt.xlabel("Amostras")
+            plt.ylabel("Amplitude")
+            plt.grid()
+            plt.tight_layout()
+        plt.savefig(
+            "images/tests/camada_fisica/transmissor_banda_base_manchester_forma_de_onda_simbolo.png"
+        )
+        plt.close()
+
+    def test_banda_base_dicionario_de_formas_de_onda_manchester_1bit(self):
+        transmissor = TransmissorBandaBase(
+            codificacao="manchester", bits_por_simbolo=1, debug=True
+        )
+
+        dicionario = transmissor.gerar_dicionario_de_formas_de_onda()
+
+        self.assertEqual(len(dicionario), 2)  # 1 bit por símbolo => 2 símbolos
+
+        plt.figure(figsize=(20, 12))
+        for simbolo, forma_de_onda in dicionario.items():
+            self.assertEqual(
+                forma_de_onda.shape[0],
+                transmissor.frequencia_de_simbolo * 2,  # *2 devido ao clock
+            )  # Cada forma de onda deve ter duração de 1 símbolo
+            plt.subplot(4, 4, simbolo + 1)
+            plt.title(
+                f"Forma de onda do símbolo {simbolo} na codificação NRZ Manchester"
+            )
+            plt.ylim(-4, 4)
+            plt.plot(forma_de_onda.flatten())
+            plt.xlabel("Amostras")
+            plt.ylabel("Amplitude")
+            plt.grid()
+            plt.tight_layout()
+        plt.savefig(
+            "images/tests/camada_fisica/transmissor_banda_base_manchester_1bit_forma_de_onda_simbolo.png"
+        )
+        plt.close()
+
+    def test_banda_base_dicionario_de_formas_de_onda_bipolar(self):
+        transmissor = TransmissorBandaBase(
+            codificacao="bipolar", bits_por_simbolo=4, debug=True
+        )
+
+        dicionario = transmissor.gerar_dicionario_de_formas_de_onda()
+
+        self.assertEqual(len(dicionario), 16)  # 4 bits por símbolo => 16 símbolos
+
+        plt.figure(figsize=(20, 12))
+        for simbolo, forma_de_onda in dicionario.items():
+            self.assertEqual(
+                forma_de_onda.shape[0],
+                transmissor.frequencia_de_simbolo * 2,  # *2 devido ao clock
+            )  # Cada forma de onda deve ter duração de 1 símbolo
+            plt.subplot(4, 4, simbolo + 1)
+            plt.title(f"Forma de onda do símbolo {simbolo} na codificação Bipolar")
+            plt.ylim(-4, 4)
+            plt.plot(forma_de_onda.flatten())
+            plt.xlabel("Amostras")
+            plt.ylabel("Amplitude")
+            plt.grid()
+            plt.tight_layout()
+        plt.savefig(
+            "images/tests/camada_fisica/transmissor_banda_base_bipolar_forma_de_onda_simbolo.png"
         )
         plt.close()
 
