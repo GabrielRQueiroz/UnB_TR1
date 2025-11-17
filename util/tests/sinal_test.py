@@ -152,7 +152,8 @@ class TestSinal(unittest.TestCase):
         plt.savefig("images/tests/camada_fisica/sinal_com_curva_tensao_1bit.png")
         plt.close()
 
-        self.assertEqual(len(sinal_com_curva), fonte.taxa_amostragem * len(simbolos))
+        self.assertEqual(len(sinal_com_curva[0]), fonte.taxa_amostragem)
+        self.assertEqual(len(sinal_com_curva), len(simbolos))
 
     def test_gerar_curva_tensao_4bit(self):
         fonte = Sinal(bits_por_simbolo=4)
