@@ -32,8 +32,6 @@ jobs:
         name: coverage-html-report
         path: htmlcov/
   deploy:
-  
-  deploy:
     needs: build
     permissions:
       pages: write      # to deploy to Pages
