@@ -82,11 +82,9 @@ class Sinal:
         # faz sentido definir quantos símbolos serão representados até que seja considerado
         # que um período foi percorrido. Isso melhora o resultado para sequências muito extensas
         # de símbolos.
-        segmentos = np.array_split(
+        segmentos = np.split(
             simbolos_decimais,
-            max(
-                1, len(simbolos_decimais) // simbolos_por_periodo
-            ),  # [[s1], [s2], [s3], ...] -> [[s1, s2, s3, s4], [s5, s6, s7, s8], ...]
+            np.arange(simbolos_por_periodo, len(simbolos_decimais), simbolos_por_periodo) # [[s1], [s2], [s3], ...] -> [[s1, s2, s3, s4], [s5, s6, s7, s8], ...]
         )
         forma_de_onda = np.concatenate(
             [
