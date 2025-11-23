@@ -212,6 +212,16 @@ class TestSinal(unittest.TestCase):
         self.assertEqual(len(sinal_com_curva[0]), fonte.taxa_amostragem)
         self.assertEqual(len(sinal_com_curva), len(simbolos))
 
+    def test_sequencia_de_bits_para_simbolos_com_excedentes(self):
+        fonte = Sinal(bits_por_simbolo=3)
+        bits = np.array([1, 0, 1, 1, 1, 0, 1])  # 7 bits
+        simbolos = fonte.sequencia_de_bits_para_simbolos(bits)
+
+        # Deve criar 3 símbolos: [101], [110], [100] (com padding)
+        esperado = np.array([[1, 0, 1], [1, 1, 0], [1, 0, 0]])
+
+        npt.assert_array_equal(simbolos, esperado)
+
 
 if __name__ == "__main__":
     unittest.main()

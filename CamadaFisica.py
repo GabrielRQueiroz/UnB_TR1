@@ -111,10 +111,22 @@ class Sinal:
             return bits
 
         num_simbolos = len(bits) // self.bits_por_simbolo
+        bits_excedentes = len(bits) % self.bits_por_simbolo
+        
+        bits_excedentes_array = bits[num_simbolos * self.bits_por_simbolo :]
         bits = bits[: num_simbolos * self.bits_por_simbolo]
+        
         simbolos = bits.reshape((num_simbolos, self.bits_por_simbolo))
 
-        return simbolos
+        if bits_excedentes > 0:
+            simbolos_excedentes = np.concatenate((
+                bits_excedentes_array,
+                np.zeros(self.bits_por_simbolo - bits_excedentes_array.size, dtype=int),
+            ))
+            simbolos = np.append(simbolos, simbolos_excedentes)
+            num_simbolos += 1
+
+        return simbolos.reshape((num_simbolos, self.bits_por_simbolo))
 
     def binario_para_decimal(self, bits: np.ndarray) -> np.ndarray:
         """
@@ -684,6 +696,7 @@ class TransmissorBandaBase(TransmissorBase):
         frequencia_de_simbolo: float = 1.0,
         tensao_pico: float = 3.3,
         taxa_amostragem: int = 1000,
+        sigma: float = 0.1,
         debug: bool = False,
     ):
         super().__init__()
@@ -694,7 +707,7 @@ class TransmissorBandaBase(TransmissorBase):
         self.frequencia_de_simbolo = frequencia_de_simbolo
         self.tensao_pico = tensao_pico
         self.taxa_amostragem = taxa_amostragem
-        self.ruido = Ruido()
+        self.ruido = Ruido(sigma=sigma)
         self.debug = (
             debug  # Flag para printar sinal intermediário e pular adição de ruído
         )
@@ -748,6 +761,7 @@ class Modulador(TransmissorBase):
         bits_por_simbolo: int = 1,
         tensao_pico: float = 3.3,
         taxa_amostragem: int = 1000,
+        sigma: float = 0.1,
         debug: bool = False,
     ):
         super().__init__()
@@ -763,7 +777,7 @@ class Modulador(TransmissorBase):
             tempo_de_simbolo=1 / frequencia_portadora,
             taxa_amostragem=taxa_amostragem,
         )
-        self.ruido = Ruido()
+        self.ruido = Ruido(sigma=sigma)
         self.debug = (
             debug  # Flag para printar sinal intermediário e pular adição de ruído
         )

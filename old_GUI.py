@@ -63,7 +63,7 @@ class JanelaPrincipal(Gtk.Window):
         self.combo_erro.append_text("Hamming")
         self.combo_erro.set_active(0)
         layout.pack_start(self.combo_erro, False, False, 0)
-        
+
         # Caixa tamanho do EDC
         self.combo_edc = Gtk.ComboBoxText()
         self.combo_edc.append_text("8 bits")
@@ -71,7 +71,7 @@ class JanelaPrincipal(Gtk.Window):
         self.combo_edc.append_text("32 bits")
         self.combo_edc.set_active(0)
         layout.pack_start(self.combo_edc, False, False, 0)
-        
+
         # Caixa tamanho maximo do quadro
         self.combo_tam_quadro = Gtk.ComboBoxText()
         self.combo_tam_quadro.append_text("128 bytes")
@@ -79,6 +79,12 @@ class JanelaPrincipal(Gtk.Window):
         self.combo_tam_quadro.append_text("512 bytes")
         self.combo_tam_quadro.append_text("1024 bytes")
         self.combo_tam_quadro.set_active(0)
+
+        # Caixa erro sigma
+        self.entry_sigma = Gtk.Entry()
+        self.entry_sigma.set_placeholder_text("Sigma do ruído (ex: 0.1)")
+        self.entry_sigma.set_text("0.1")
+        layout.pack_start(self.entry_sigma, False, False, 0)
 
         # Frequência
         self.entry_freq = Gtk.Entry()
@@ -113,6 +119,7 @@ class JanelaPrincipal(Gtk.Window):
         tipo_cod = self.combo_cod.get_active_text()
         freq = float(self.entry_freq.get_text())
         bps = int(self.entry_bps.get_text())
+        sigma = float(self.entry_sigma.get_text())
 
         # CONVERTE MENSAGEM PARA BITS
         bits = np.array(
@@ -124,6 +131,7 @@ class JanelaPrincipal(Gtk.Window):
             frequencia_portadora=freq,
             bits_por_simbolo=bps,
             taxa_amostragem=1000 * freq,
+            sigma=sigma,
             debug=False,
         )
 
@@ -139,6 +147,7 @@ class JanelaPrincipal(Gtk.Window):
             bits_por_simbolo=bps,
             frequencia_de_simbolo=freq,
             taxa_amostragem=1000 * freq,
+            sigma=sigma,
             debug=False,
         )
 
