@@ -266,12 +266,15 @@ class JanelaPrincipal(Gtk.Window):
         pagina_rx.pack_start(quadro_fis_rx, False, False, 0)
         grade_fis_rx = Gtk.Grid(column_spacing=8, row_spacing=6, margin=6)
         quadro_fis_rx.add(grade_fis_rx)
-        grade_fis_rx.attach(Gtk.Label("Bits decodificados:"), 0, 3, 1, 1)
+        grade_fis_rx.attach(Gtk.Label("Bits decodificados:"), 0, 1, 1, 1)
         self.visao_bits_decodificados = Gtk.TextView(width_request=700, height_request=20)
         self.visao_bits_decodificados.set_editable(False)
         Gtk.TextView.set_pixels_above_lines(self.visao_bits_decodificados, 20 / 2 - 8)
         Gtk.TextView.set_wrap_mode(self.visao_bits_decodificados, Gtk.WrapMode.CHAR)
-        grade_fis_rx.attach(self.visao_bits_decodificados, 1, 3, 1, 1)
+        grade_fis_rx.attach(self.visao_bits_decodificados, 1, 1, 1, 1)
+        botao_decodificar = Gtk.Button(label="Decodificar sinal recebido")
+        botao_decodificar.connect("clicked", self.quando_clicar_decodificar_sinal_fisico)
+        grade_fis_rx.attach(botao_decodificar, 0, 0, 1, 1)
         
         # =====================================================
         # Camada Enlace
@@ -428,9 +431,7 @@ class JanelaPrincipal(Gtk.Window):
 
         self.sinal_tx = sinal
         self.taxa_amostragem_tx = modulador.taxa_amostragem
-        self._definir_texto_na_caixa(self.visao_bits_decodificados,
-            "".join(str(n) for n in list(demodulador.processar_sinal(sinal).flatten()))
-        )
+        self.decodificador_rx = demodulador
 
         self._plotar_transmissor()
 
@@ -472,14 +473,26 @@ class JanelaPrincipal(Gtk.Window):
 
         self.sinal_tx = sinal
         self.taxa_amostragem_tx = codificador.taxa_amostragem
-        self._definir_texto_na_caixa(self.visao_bits_decodificados,
-            "".join(str(n) for n in list(decodificador.processar_sinal(sinal).flatten()))
-        )
+        self.decodificador_rx = decodificador
 
         self._plotar_transmissor()
 
         self.rotulo_amostras.set_text(str(len(sinal)))
         self._registrar_log("Sinal codificado gerado.")
+
+    def quando_clicar_decodificar_sinal_fisico(self, widget):
+        """Pega o sinal modulado e manda pra camada física (decodificação)."""
+        if self.sinal_tx is None:
+            self._registrar_log("Nenhum sinal modulado disponível.")
+            return
+
+        bits_decodificados = self.decodificador_rx.processar_sinal(self.sinal_tx)
+
+        self._definir_texto_na_caixa(self.visao_bits_decodificados,
+            "".join(str(n) for n in list(bits_decodificados.flatten()))
+        )
+
+        self._registrar_log("Sinal decodificado.")
 
     # =======================
     # Funções do RX (callbacks)
