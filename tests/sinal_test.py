@@ -157,7 +157,7 @@ class TestSinal(unittest.TestCase):
     def test_gerar_curva_tensao_4bit(self):
         fonte = Sinal(bits_por_simbolo=4)
         simbolos = fonte.binario_para_decimal(np.array([[0, 1, 0, 1], [0, 1, 0, 0]]))
-        sinal_com_curva = fonte.gerar_pulso_tensao(simbolos, tempo_de_simbolo=1)
+        sinal_com_curva = fonte.gerar_pulso_tensao(simbolos, tempo_de_simbolo=0.1)
 
         # Plotar 1) o sinal completo e 2) cada símbolo individualmente
         plt.figure(figsize=(10, 6))
@@ -182,14 +182,12 @@ class TestSinal(unittest.TestCase):
         plt.savefig("images/tests/camada_fisica/sinal_com_curva_tensao.png")
         plt.close()
 
-        self.assertEqual(len(sinal_com_curva[0]), fonte.taxa_amostragem)
+        self.assertEqual(len(sinal_com_curva[0]), int(fonte.taxa_amostragem * 0.1))
         self.assertEqual(len(sinal_com_curva), len(simbolos))
-        
+
     def test_gerar_curva_mensagem_grande(self):
         fonte = Sinal(bits_por_simbolo=8)
-        bits = fonte.gerar_sinal_binario(
-            mensagem="The quick brown fox"
-        )
+        bits = fonte.gerar_sinal_binario(mensagem="The quick brown fox")
         simbolos = fonte.binario_para_decimal(bits)
         sinal_com_curva = fonte.gerar_pulso_tensao(simbolos)
 
@@ -200,11 +198,15 @@ class TestSinal(unittest.TestCase):
         plt.ylabel("Tensão")
         plt.grid()
         for i in range(
-            0, len(sinal_com_curva) * int(fonte.taxa_amostragem + 1), int(fonte.taxa_amostragem)
+            0,
+            len(sinal_com_curva) * int(fonte.taxa_amostragem + 1),
+            int(fonte.taxa_amostragem),
         ):  # Linhas verticais separando cada símbolo
             plt.axvline(x=i, color="red", linestyle="--", alpha=0.5)
         plt.tight_layout()
-        plt.savefig("images/tests/camada_fisica/sinal_com_curva_tensao_mensagem_grande.png")
+        plt.savefig(
+            "images/tests/camada_fisica/sinal_com_curva_tensao_mensagem_grande.png"
+        )
         plt.close()
 
         self.assertEqual(len(sinal_com_curva[0]), fonte.taxa_amostragem)

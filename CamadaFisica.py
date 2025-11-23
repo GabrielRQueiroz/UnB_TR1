@@ -84,7 +84,9 @@ class Sinal:
         # de símbolos.
         segmentos = np.split(
             simbolos_decimais,
-            np.arange(simbolos_por_periodo, len(simbolos_decimais), simbolos_por_periodo) # [[s1], [s2], [s3], ...] -> [[s1, s2, s3, s4], [s5, s6, s7, s8], ...]
+            np.arange(
+                simbolos_por_periodo, len(simbolos_decimais), simbolos_por_periodo
+            ),  # [[s1], [s2], [s3], ...] -> [[s1, s2, s3, s4], [s5, s6, s7, s8], ...]
         )
         forma_de_onda = np.concatenate(
             [
@@ -158,9 +160,17 @@ class Sinal:
         Gera uma série de Fourier.
         Retorna um array numpy com a forma de onda com taxa_amostragem * tempo_de_simbolo amostras ([amostras/s] * [s]).
         """
-        periodo = len(simbolos) * tempo_de_simbolo
+        periodo = tempo_de_simbolo * len(simbolos)
         t = np.linspace(0, periodo, int(periodo * self.taxa_amostragem), endpoint=False)
-        c = 2 / periodo * np.sum(simbolos)
+        c = (
+            2
+            / periodo
+            * quad(
+                lambda t: simbolos[int(t // tempo_de_simbolo)],
+                0,
+                periodo,
+            )[0]
+        )
 
         resultado = np.zeros_like(t) + c / 2
 
@@ -691,13 +701,13 @@ class TransmissorBandaBase(TransmissorBase):
 
     def processar_sinal(self, bits: np.ndarray) -> np.ndarray:
         """
-            Recebe um array numpy com a sequência de bits -> [b1, b2, b3, ...] ou [[simbolo1_b1, simbolo1_b2, ...], [simbolo2_b1, simbolo2_b2, ...], ...].
-            Retorna um array numpy com a forma de onda do sinal transmitido -> [[forma_de_onda1], [forma_de_onda2], [forma_de_onda3], ...].
-            1 - Agrupa os bits em símbolos de acordo com bits_por_simbolo
-            2 - Codifica os símbolos usando o esquema de codificação selecionado
-            3 - Determina o nível de tensão do sinal codificado
-            4 - Gera a forma de onda do sinal codificado
-            5 - Adiciona ruído ao sinal codificado (se debug=False)
+        Recebe um array numpy com a sequência de bits -> [b1, b2, b3, ...] ou [[simbolo1_b1, simbolo1_b2, ...], [simbolo2_b1, simbolo2_b2, ...], ...].
+        Retorna um array numpy com a forma de onda do sinal transmitido -> [[forma_de_onda1], [forma_de_onda2], [forma_de_onda3], ...].
+        1 - Agrupa os bits em símbolos de acordo com bits_por_simbolo
+        2 - Codifica os símbolos usando o esquema de codificação selecionado
+        3 - Determina o nível de tensão do sinal codificado
+        4 - Gera a forma de onda do sinal codificado
+        5 - Adiciona ruído ao sinal codificado (se debug=False)
         """
         bits = bits.flatten()
         sinal = Sinal(self.bits_por_simbolo, taxa_amostragem=self.taxa_amostragem)
@@ -726,8 +736,6 @@ class TransmissorBandaBase(TransmissorBase):
             sinal_codificado += self.ruido.gerar_ruido(
                 sinal_codificado
             )  # Adiciona ruído ao sinal codificado
-
-        print(sinal_codificado.shape)
 
         return sinal_codificado
 
@@ -766,14 +774,14 @@ class Modulador(TransmissorBase):
 
     def processar_sinal(self, bits: np.ndarray) -> np.ndarray:
         """
-            Recebe um array numpy com a sequência de bits -> [b1, b2, b3, ...] ou [[simbolo1_b1, simbolo1_b2, ...], [simbolo2_b1, simbolo2_b2, ...], ...].
-            Retorna um array numpy com a forma de onda do sinal modulado -> [[forma_de_onda1], [forma_de_onda2], [forma_de_onda3], ...].
-            1 - Agrupa os bits em símbolos de acordo com bits_por_simbolo
-            2 - Converte os símbolos para decimal
-            3 - Gera os parâmetros de modulação conforme a modulação selecionada
-            4 - Modula a portadora conforme os parâmetros gerados
-            5 - Adiciona ruído ao sinal modulado (se debug=False)
-            
+        Recebe um array numpy com a sequência de bits -> [b1, b2, b3, ...] ou [[simbolo1_b1, simbolo1_b2, ...], [simbolo2_b1, simbolo2_b2, ...], ...].
+        Retorna um array numpy com a forma de onda do sinal modulado -> [[forma_de_onda1], [forma_de_onda2], [forma_de_onda3], ...].
+        1 - Agrupa os bits em símbolos de acordo com bits_por_simbolo
+        2 - Converte os símbolos para decimal
+        3 - Gera os parâmetros de modulação conforme a modulação selecionada
+        4 - Modula a portadora conforme os parâmetros gerados
+        5 - Adiciona ruído ao sinal modulado (se debug=False)
+
         """
         bits = bits.flatten()
         sinal = Sinal(self.bits_por_simbolo, self.taxa_amostragem)
@@ -856,7 +864,7 @@ class Decodificador(ReceptorBase):
         4 - Converte os símbolos decimais obtidos da comparação para binário
         """
         bits = bits.flatten()
-        
+
         sinal = Sinal(self.bits_por_simbolo, self.taxa_amostragem)
         tempo_de_simbolo = 1 / self.frequencia_de_simbolo
         amostras_por_simbolo = int(self.taxa_amostragem * tempo_de_simbolo)
