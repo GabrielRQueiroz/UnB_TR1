@@ -381,9 +381,15 @@ class JanelaPrincipal(Gtk.Window):
 
         tipo_enq = self.combo_enq_tx.get_active()
         tipo_err = self.combo_err_tx.get_active()
+        tam_max_quadro = converter_int_seguro(
+            self.campo_tamanho_max_quadro.get_text(), 1024
+        )
+        tam_edc = converter_int_seguro(
+            self.campo_tamanho_edc.get_text(), 16
+        )
 
         resultado = self.modulo_tx_enlace.processar(
-            self.ultimos_bits, tipo_enq, tipo_err
+            self.ultimos_bits, tipo_enq, tipo_err, tam_max_quadro, tam_edc
         )
 
         self.payload_tx = resultado.get("payload_protegido", "")
@@ -511,8 +517,14 @@ class JanelaPrincipal(Gtk.Window):
 
         tipo_enq = self.combo_enq_rx.get_active()
         tipo_err = self.combo_err_rx.get_active()
+        tam_max_quadro = converter_int_seguro(
+            self.campo_tamanho_max_quadro.get_text(), 1024
+        )
+        tam_edc = converter_int_seguro(
+            self.campo_tamanho_edc.get_text(), 16
+        )
 
-        resultado = self.modulo_rx_enlace.processar(quadro, tipo_enq, tipo_err)
+        resultado = self.modulo_rx_enlace.processar(quadro, tipo_enq, tipo_err, tam_max_quadro, tam_edc)
 
         self._definir_texto_na_caixa(
             self.visao_quadro_bruto, resultado.get("quadro_bruto", "")
