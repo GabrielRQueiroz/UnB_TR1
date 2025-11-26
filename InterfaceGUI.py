@@ -117,11 +117,17 @@ class JanelaPrincipal(Gtk.Window):
         # TX
         # =====================================================
         self.scrolledwindow_tx = Gtk.ScrolledWindow()
-        self.scrolledwindow_tx.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        self.scrolledwindow_tx.set_policy(
+            Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC
+        )
 
-        self.pagina_tx = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8, margin=6)
+        self.pagina_tx = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL, spacing=8, margin=6
+        )
         self.scrolledwindow_tx.add(self.pagina_tx)
-        bloco_abas.append_page(self.scrolledwindow_tx, Gtk.Label(label="Transmissor (Tx)"))
+        bloco_abas.append_page(
+            self.scrolledwindow_tx, Gtk.Label(label="Transmissor (Tx)")
+        )
 
         # entrada de aplicação
         quadro_app = Gtk.Frame(label="Aplicação (Tx)")
@@ -165,7 +171,7 @@ class JanelaPrincipal(Gtk.Window):
             self.combo_err_tx.append_text(t)
         self.combo_err_tx.set_active(0)
         grade_enlace_tx.attach(self.combo_err_tx, 3, 0, 1, 1)
-        
+
         botao_aplicar_enlace = Gtk.Button(label="Aplicar Enlace (Gerar Quadro)")
         botao_aplicar_enlace.connect(
             "clicked", self.quando_clicar_aplicar_enlace_transmissao
@@ -239,7 +245,7 @@ class JanelaPrincipal(Gtk.Window):
         grade_fis_tx.attach(Gtk.Label("Amostras geradas:"), 0, 3, 1, 1)
         self.rotulo_amostras = Gtk.Label(label="")
         grade_fis_tx.attach(self.rotulo_amostras, 1, 3, 1, 1)
-        
+
         quadro_plots = Gtk.Frame(label="Visualização do Sinal (Tx)")
         self.pagina_tx.pack_start(quadro_plots, True, True, 0)
         fig_tx = Figure(figsize=(12, 10))
@@ -261,21 +267,25 @@ class JanelaPrincipal(Gtk.Window):
         # =====================================================
         # Camada Física
         # =====================================================
-        
+
         quadro_fis_rx = Gtk.Frame(label="Camada Física (Rx)")
         pagina_rx.pack_start(quadro_fis_rx, False, False, 0)
         grade_fis_rx = Gtk.Grid(column_spacing=8, row_spacing=6, margin=6)
         quadro_fis_rx.add(grade_fis_rx)
         grade_fis_rx.attach(Gtk.Label("Bits decodificados:"), 0, 1, 1, 1)
-        self.visao_bits_decodificados = Gtk.TextView(width_request=700, height_request=20)
+        self.visao_bits_decodificados = Gtk.TextView(
+            width_request=700, height_request=20
+        )
         self.visao_bits_decodificados.set_editable(False)
         Gtk.TextView.set_pixels_above_lines(self.visao_bits_decodificados, 20 / 2 - 8)
         Gtk.TextView.set_wrap_mode(self.visao_bits_decodificados, Gtk.WrapMode.CHAR)
         grade_fis_rx.attach(self.visao_bits_decodificados, 1, 1, 1, 1)
         botao_decodificar = Gtk.Button(label="Decodificar sinal recebido")
-        botao_decodificar.connect("clicked", self.quando_clicar_decodificar_sinal_fisico)
+        botao_decodificar.connect(
+            "clicked", self.quando_clicar_decodificar_sinal_fisico
+        )
         grade_fis_rx.attach(botao_decodificar, 0, 0, 1, 1)
-        
+
         # =====================================================
         # Camada Enlace
         # =====================================================
@@ -345,11 +355,15 @@ class JanelaPrincipal(Gtk.Window):
         # =====================================================
 
         # logs gerais
-        quadro_logs = Gtk.Frame(label="Logs")
-        caixa_vertical.pack_start(quadro_logs, False, False, 0)
-        self.caixa_logs = Gtk.TextView(height_request=100)
+        logs_quadro = Gtk.Frame(label="Logs")
+        caixa_vertical.pack_start(logs_quadro, False, False, 0)
+        scrollable_logs = Gtk.ScrolledWindow()
+        scrollable_logs.set_size_request(-1, 100)
+        scrollable_logs.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        logs_quadro.add(scrollable_logs)
+        self.caixa_logs = Gtk.TextView(height_request=400)
         self.caixa_logs.set_editable(False)
-        quadro_logs.add(self.caixa_logs)
+        scrollable_logs.add(self.caixa_logs)
 
         # variáveis
         self.ultimos_bits = ""
@@ -384,9 +398,7 @@ class JanelaPrincipal(Gtk.Window):
         tam_max_quadro = converter_int_seguro(
             self.campo_tamanho_max_quadro.get_text(), 1024
         )
-        tam_edc = converter_int_seguro(
-            self.campo_tamanho_edc.get_text(), 16
-        )
+        tam_edc = converter_int_seguro(self.campo_tamanho_edc.get_text(), 16)
 
         resultado = self.modulo_tx_enlace.processar(
             self.ultimos_bits, tipo_enq, tipo_err, tam_max_quadro, tam_edc
@@ -417,32 +429,34 @@ class JanelaPrincipal(Gtk.Window):
 
         taxa = int(freq * 1000) if freq > 0 else 1000
 
-        modulador = Modulador(
-            modulacao=mod_tipo,
-            frequencia_portadora=freq,
-            bits_por_simbolo=bps,
-            taxa_amostragem=taxa,
-            sigma=sigma,
-            debug=debug,
-        )
+        try:
+            modulador = Modulador(
+                modulacao=mod_tipo,
+                frequencia_portadora=freq,
+                bits_por_simbolo=bps,
+                taxa_amostragem=taxa,
+                sigma=sigma,
+                debug=debug,
+            )
 
-        demodulador = Demodulador(
-            modulacao=mod_tipo,
-            frequencia_portadora=freq,
-            bits_por_simbolo=bps,
-            taxa_amostragem=taxa,
-        )
+            demodulador = Demodulador(
+                modulacao=mod_tipo,
+                frequencia_portadora=freq,
+                bits_por_simbolo=bps,
+                taxa_amostragem=taxa,
+            )
+            sinal = modulador.processar_sinal(arr_bits)
 
-        sinal = modulador.processar_sinal(arr_bits)
+            self.sinal_tx = sinal
+            self.taxa_amostragem_tx = modulador.taxa_amostragem
+            self.decodificador_rx = demodulador
 
-        self.sinal_tx = sinal
-        self.taxa_amostragem_tx = modulador.taxa_amostragem
-        self.decodificador_rx = demodulador
+            self._plotar_transmissor()
 
-        self._plotar_transmissor()
-
-        self.rotulo_amostras.set_text(str(len(sinal)))
-        self._registrar_log("Sinal modulado gerado.")
+            self.rotulo_amostras.set_text(str(len(sinal)))
+            self._registrar_log("Sinal modulado gerado.")
+        except Exception as e:
+            self._registrar_log(f"Erro: não foi possível modular o sinal. {e}")
 
     def quando_clicar_transmitir_sinal_fisico_codificado(self, widget):
         if not self.quadro_tx:
@@ -459,32 +473,35 @@ class JanelaPrincipal(Gtk.Window):
 
         taxa = int(freq * 1000) if freq > 0 else 1000
 
-        codificador = TransmissorBandaBase(
-            codificacao=cod_tipo,
-            bits_por_simbolo=bps,
-            frequencia_de_simbolo=freq,
-            taxa_amostragem=taxa,
-            sigma=sigma,
-            debug=debug,
-        )
+        try:
+            codificador = TransmissorBandaBase(
+                codificacao=cod_tipo,
+                bits_por_simbolo=bps,
+                frequencia_de_simbolo=freq,
+                taxa_amostragem=taxa,
+                sigma=sigma,
+                debug=debug,
+            )
 
-        decodificador = Decodificador(
-            codificacao=cod_tipo,
-            bits_por_simbolo=bps,
-            frequencia_de_simbolo=freq,
-            taxa_amostragem=taxa,
-        )
+            decodificador = Decodificador(
+                codificacao=cod_tipo,
+                bits_por_simbolo=bps,
+                frequencia_de_simbolo=freq,
+                taxa_amostragem=taxa,
+            )
 
-        sinal = codificador.processar_sinal(arr_bits).flatten()
+            sinal = codificador.processar_sinal(arr_bits).flatten()
 
-        self.sinal_tx = sinal
-        self.taxa_amostragem_tx = codificador.taxa_amostragem
-        self.decodificador_rx = decodificador
+            self.sinal_tx = sinal
+            self.taxa_amostragem_tx = codificador.taxa_amostragem
+            self.decodificador_rx = decodificador
 
-        self._plotar_transmissor()
+            self._plotar_transmissor()
 
-        self.rotulo_amostras.set_text(str(len(sinal)))
-        self._registrar_log("Sinal codificado gerado.")
+            self.rotulo_amostras.set_text(str(len(sinal)))
+            self._registrar_log("Sinal codificado gerado.")
+        except Exception as e:
+            self._registrar_log(f"Erro: não foi possível codificar o sinal. {e}")
 
     def quando_clicar_decodificar_sinal_fisico(self, widget):
         """Pega o sinal modulado e manda pra camada física (decodificação)."""
@@ -494,8 +511,9 @@ class JanelaPrincipal(Gtk.Window):
 
         bits_decodificados = self.decodificador_rx.processar_sinal(self.sinal_tx)
 
-        self._definir_texto_na_caixa(self.visao_bits_decodificados,
-            "".join(str(n) for n in list(bits_decodificados.flatten()))
+        self._definir_texto_na_caixa(
+            self.visao_bits_decodificados,
+            "".join(str(n) for n in list(bits_decodificados.flatten())),
         )
 
         self._registrar_log("Sinal decodificado.")
@@ -505,11 +523,15 @@ class JanelaPrincipal(Gtk.Window):
     # =======================
     def quando_clicar_processar_recepcao(self, widget):
         """Processa o quadro recebido: desenquadrar, verificar erro, retornar dados."""
-        quadro = self.visao_bits_decodificados.get_buffer().get_text(
-            self.visao_bits_decodificados.get_buffer().get_start_iter(),
-            self.visao_bits_decodificados.get_buffer().get_end_iter(),
-            True,
-        ).strip()
+        quadro = (
+            self.visao_bits_decodificados.get_buffer()
+            .get_text(
+                self.visao_bits_decodificados.get_buffer().get_start_iter(),
+                self.visao_bits_decodificados.get_buffer().get_end_iter(),
+                True,
+            )
+            .strip()
+        )
 
         if not quadro:
             self._registrar_log("Quadro vazio.")
@@ -520,11 +542,11 @@ class JanelaPrincipal(Gtk.Window):
         tam_max_quadro = converter_int_seguro(
             self.campo_tamanho_max_quadro.get_text(), 1024
         )
-        tam_edc = converter_int_seguro(
-            self.campo_tamanho_edc.get_text(), 16
-        )
+        tam_edc = converter_int_seguro(self.campo_tamanho_edc.get_text(), 16)
 
-        resultado = self.modulo_rx_enlace.processar(quadro, tipo_enq, tipo_err, tam_max_quadro, tam_edc)
+        resultado = self.modulo_rx_enlace.processar(
+            quadro, tipo_enq, tipo_err, tam_max_quadro, tam_edc
+        )
 
         self._definir_texto_na_caixa(
             self.visao_quadro_bruto, resultado.get("quadro_bruto", "")
@@ -547,6 +569,7 @@ class JanelaPrincipal(Gtk.Window):
         self.rotulo_detalhes_rx.set_text(resultado.get("detalhes", ""))
 
         self._registrar_log(f"RX processado: {resultado.get('status')}")
+
     # -------------------------
     # métodos auxiliares privados
     # -------------------------
@@ -578,7 +601,6 @@ class JanelaPrincipal(Gtk.Window):
         ax.grid()
         fig_tx.tight_layout()
         self.canvas_tx.draw()
-        
 
     def _definir_texto_na_caixa(self, caixa: Gtk.TextView, texto: str):
         caixa.get_buffer().set_text(texto)
@@ -586,7 +608,7 @@ class JanelaPrincipal(Gtk.Window):
     def _registrar_log(self, mensagem: str):
         buf = self.caixa_logs.get_buffer()
         anterior = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
-        buf.set_text(anterior + mensagem + "\n")
+        buf.set_text(mensagem + "\n" + anterior)
 
 
 # -------------------------

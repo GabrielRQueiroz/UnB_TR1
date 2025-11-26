@@ -547,7 +547,7 @@ class PSK(ModulacaoBase):
 
         # Nota: simbolos_decimais já apresenta valores de 0 a 1
         for simbolo in simbolos_decimais:
-            indice = np.where(tabela_gray == simbolo)[0][0]
+            indice = np.where(np.isclose(tabela_gray, simbolo))[0][0]
             fase = indice * (360 / num_fases)
             parametros.append(fase)
 
