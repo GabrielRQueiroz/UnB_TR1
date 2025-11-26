@@ -1,7 +1,7 @@
 import gi
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk
 
 import numpy as np
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
@@ -616,17 +616,3 @@ class JanelaGrafico(Gtk.Window):
         ax.grid()
 
         canvas.draw()
-
-
-# -------------------------
-# executa o programa
-# -------------------------
-def main():
-    janela = JanelaPrincipal()
-    janela.connect("destroy", Gtk.main_quit)
-    janela.show_all()
-    Gtk.main()
-
-
-if __name__ == "__main__":
-    main()
